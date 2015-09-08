@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<module name="Checker">
+  <module name="TreeWalker">
+    <property name="tabWidth" value="4" />
+
+    <!-- Checks for imports                              -->
+    <!-- See http://checkstyle.sf.net/config_import.html -->
+    <module name="AvoidStarImport"/>
+    <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
+    <module name="RedundantImport"/>
+    <module name="UnusedImports"/>
+
+    <!-- Modifier Checks                                    -->
+    <!-- See http://checkstyle.sf.net/config_modifiers.html -->
+    <module name="ModifierOrder"/>
+    <module name="RedundantModifier"/>
+
+    <module name="EqualsAvoidNull"/>
+    <module name="MissingSwitchDefault"/>
+    <module name="SimplifyBooleanReturn"/>
+    <module name="SimplifyBooleanExpression"/>
+
+    <!--
+        Code Style
+    -->
+
+    <module name="LeftCurly"/>
+    <module name="RightCurly"/>
+
+    <module name="MethodParamPad"/>
+    <module name="WhitespaceAround"/>
+
+    <!--
+        Naming Conventions
+    -->
+
+    <module name="UpperEll"/><!-- long constants are defined with an upper ell -->
+
+    <!-- Package names must be . separated alphanumeric strings that start with a lower case letter -->
+    <module name="PackageName"/>
+
+    <!-- Methods must start with a lowercase and be alphanumeric -->
+    <module name="MethodName">
+        <property name="format" value="^[a-z][a-zA-Z0-9]+$"/>
+    </module>
+
+    <!-- Member variable names must be alphanumeric; underscores are permitted -->
+    <module name="MemberName">
+        <property name="format" value="^[a-zA-Z][a-zA-Z0-9]+$|[a-zA-Z0-9]{2,}(_[a-zA-Z0-9]+)*$|^[a-z]$"/>
+    </module>
+
+    <!-- Static final variables must be named using caps with underscores permitted -->
+    <module name="ConstantName">
+        <property name="format" value="^[A-Z][A-Z0-9]+$|^[A-Z][A-Z0-9]+(_[A-Z0-9]+)*$"/>
+    </module>
+
+    <!-- Static variables must be alphanumeric; underscores are permitted -->
+    <module name="StaticVariableName">
+        <property name="format" value="^[a-z][a-zA-Z0-9]+$|^[a-zA-Z0-9]*(_[a-zA-Z0-9]+)*$|^[A-Z]$"/>
+    </module>
+
+    <module name="RegexpSinglelineJava">
+        <property name="format" value="\s+$"/>
+        <property name="minimum" value="0"/>
+        <property name="maximum" value="0"/>
+        <property name="message" value="Line has trailing spaces."/>
+        <property name="ignoreComments" value="true"/>
+    </module>
+
+    <!-- Don't use Finalizers -->
+    <module name="NoFinalizer"/>
+
+  </module>
+
+  <!-- Checks whether files end with a new line.                        -->
+  <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
+  <module name="NewlineAtEndOfFile">
+      <property name="lineSeparator" value="lf"/>
+  </module>
+
+  <!-- Checks for whitespace                               -->
+  <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+  <module name="FileTabCharacter"/>
+
+  <!-- Miscellaneous other checks.                   -->
+  <!-- See http://checkstyle.sf.net/config_misc.html and http://checkstyle.sourceforge.net/config_regexp.html -->
+</module>

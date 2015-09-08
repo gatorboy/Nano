@@ -1,0 +1,26 @@
+<FindBugsFilter>
+
+    <!-- Exclude these items from FindBugs reporting. -->
+    <Match>
+        <Bug pattern="DM_EXIT,
+             EI_EXPOSE_REP,
+             EI_EXPOSE_REP2,
+             FI_EXPLICIT_INVOCATION,
+             FI_FINALIZER_NULLS_FIELDS,
+             FI_MISSING_SUPER_CALL,
+             FI_PUBLIC_SHOULD_BE_PROTECTED,
+             MS_SHOULD_BE_FINAL,
+             RV_RETURN_VALUE_IGNORED_BAD_PRACTICE,
+             MF_CLASS_MASKS_FIELD,
+             SIC_INNER_SHOULD_BE_STATIC" />
+    </Match>
+
+    <!-- R.java is an auto-generated file. -->
+    <Match>
+        <Sourceline file="R.java" />
+        <Bug pattern="NM_CLASS_NAMING_CONVENTION" />
+    </Match>
+    <Match>
+        <Rank value="15"/>
+    </Match>
+</FindBugsFilter>
