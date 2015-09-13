@@ -11,4 +11,9 @@
     <dimen name="nano_degree_margin_bottom">20dp</dimen>
     <dimen name="nano_degree_margin_top">3dp</dimen>
 
+    <!-- Movie dimensions -->
+    <dimen name="poster_height">250dp</dimen>
+    <dimen name="poster_radius">2dp</dimen>
+
+
 </resources>

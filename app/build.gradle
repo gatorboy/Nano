@@ -7,9 +7,17 @@ android {
     defaultConfig {
         applicationId "com.smenedi.nano"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+
+
+        //host config
+        buildConfigField "String", "SERVICE_HOST_SCHEME", '"https"'
+        buildConfigField "String", "IMAGE_HOST_SCHEME", '"http"'
+        buildConfigField "String", "SERVICE_HOST", '"api.themoviedb.org"'
+        buildConfigField "String", "IMAGE_HOST", '"image.tmdb.org"'
+        buildConfigField "String", "API_KEY", '"e56dec55b5f170c0ffd1fee29b8a994d"'
     }
     buildTypes {
         release {
@@ -21,14 +29,19 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.android.support:cardview-v7:23.0.1'
+
 
 
     //third party dependencies
     compile 'com.jakewharton:butterknife:7.0.1' // clean code for binding views
+    compile 'com.facebook.fresco:fresco:0.7.0' //for image caching and loading
+
 }
 
-apply plugin: "pmd"
+apply plugin: 'pmd'
 task pmd(type: Pmd) {
 
     ruleSetFiles = files("$projectDir/config/pmd/pmd_rules.xml")
@@ -80,7 +93,7 @@ task findbugs(type: FindBugs) {
 }
 
 
-apply plugin: "checkstyle"
+apply plugin: 'checkstyle'
 task checkstyle(type: Checkstyle) {
     configFile file("$projectDir/config/checkstyle/checkstyle.xml")
     source 'src/main/java'
@@ -113,6 +126,7 @@ gradle.taskGraph.afterTask { Task task, TaskState state ->
     }
 }
 
+// Add checkstyle, findbugs, pmd and lint to the check task.
 check.dependsOn 'checkstyle', 'findbugs', 'pmd', 'lint'
 
 
