@@ -37,6 +37,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.smenedi.nano.MoviesActivity" />
         </activity>
+        <provider
+            android:name=".data.MovieProvider"
+            android:authorities="com.smenedi.nano"/>
+
     </application>
 
 </manifest>

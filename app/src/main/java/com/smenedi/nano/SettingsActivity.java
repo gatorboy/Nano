@@ -25,7 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings);
-            bindPreference(findPreference(getString(R.string.pref_sort_order)));
+            bindPreference(findPreference(getString(R.string.key_pref_sort_order)));
         }
 
         private void bindPreference(Preference preference) {

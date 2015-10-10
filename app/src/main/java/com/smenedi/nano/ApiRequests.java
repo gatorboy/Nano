@@ -15,8 +15,6 @@ public class ApiRequests {
     private static final String IMAGES_API_PATH = "t/p/w185";
 
     private static final String SORT_BY_QUERY_PARAMETER = "sort_by";
-    public static final String SORT_BY_POPULARITY = "popularity.desc";
-    public static final String SORT_BY_RATING = "vote_average.desc";
     private static final String API_KEY_QUERY_PARAMETER = "api_key";
 
 

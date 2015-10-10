@@ -1,28 +1,16 @@
 package com.smenedi.nano;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,9 +50,9 @@ public class MoviesFragment extends Fragment {
     }
 
     private void updateMovies() {
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
+        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getActivity(), mMovieList, mRecyclerView);
         fetchMoviesTask.execute(String.format(SORT_ORDER_FORMAT, PreferenceManager.getDefaultSharedPreferences(getContext())
-                                                                                  .getString(getString(R.string.pref_sort_order), getString(R.string.pref_sort_order_default))));
+                                                                                  .getString(getString(R.string.key_pref_sort_order), getString(R.string.value_pref_sort_order_default))));
     }
 
     @Override
@@ -91,6 +79,7 @@ public class MoviesFragment extends Fragment {
         mRecyclerView.setAdapter(new MoviesAdapter(getContext(), mMovieList));
     }
 
+/*
     public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
@@ -138,7 +127,7 @@ public class MoviesFragment extends Fragment {
                 }
                 movieJsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e("FetchMoviesTask", "Error ", e);
+                Log.e("FetchMoviesTask", "Error " + e.getMessage());
                 // If the code didn't successfully get the weather data, there's no point in attemping
                 // to parse it.
                 return null;
@@ -183,4 +172,5 @@ public class MoviesFragment extends Fragment {
             return movies;
         }
     }
+*/
 }

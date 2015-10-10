@@ -56,7 +56,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         }
 
         public void bind(Movie movie) {
-            mPoster.setImageURI(movie.getPosterPath());
+            mPoster.setImageURI(movie.getPosterPathUri());
         }
 
         @Override
