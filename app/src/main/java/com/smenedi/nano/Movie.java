@@ -96,8 +96,8 @@ public class Movie implements Parcelable {
         return mPopularity;
     }
 
-    public Uri getPosterPathUri() {
-        return ApiRequests.getPosterUri(mPosterPath);
+    public static Uri getPosterPathUri(String posterPath) {
+        return ApiRequests.getPosterUri(posterPath);
     }
 
     public String getPosterPath() {

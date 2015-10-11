@@ -17,4 +17,11 @@
         <item name="android:textColor">@android:color/black</item>
         <item name="android:onClick">appOpen</item>
     </style>
+
+    <style name="detail_margins">
+        <item name="android:paddingEnd">@dimen/movie_detail_padding_end</item>
+        <item name="android:paddingLeft">@dimen/movie_detail_padding_start</item>
+        <item name="android:paddingRight">@dimen/movie_detail_padding_end</item>
+        <item name="android:paddingStart">@dimen/movie_detail_padding_start</item>
+    </style>
 </resources>

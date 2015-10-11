@@ -1,16 +1,20 @@
 package com.smenedi.nano;
 
-import java.util.List;
-
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.smenedi.nano.MoviesAdapter.MovieViewHolder;
+import com.smenedi.nano.data.MovieContract.MovieEntry;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,49 +24,76 @@ import android.view.ViewGroup;
  */
 public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     public static final String KEY_MOVIE = "com.smenedi.nano.movie";
+    private static final String LOG_TAG = MoviesAdapter.class.getSimpleName();
 
     Context mContext;
-    private List<Movie> mMovies;
+    private Cursor mCursor;
 
-    public MoviesAdapter(Context context, List<Movie> movies) {
+    public MoviesAdapter(Context context) {
         mContext = context;
-        mMovies = movies;
     }
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        return new MovieViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_movies, viewGroup, false));
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_movies, viewGroup, false);
+        view.setFocusable(true);
+        return new MovieViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MovieViewHolder viewHolder, int position) {
-        final Movie movie = mMovies.get(position);
-        viewHolder.bind(movie);
+        mCursor.moveToPosition(position);
+        viewHolder.bind(mCursor);
     }
 
     @Override
     public int getItemCount() {
-        return mMovies.size();
+        if (null == mCursor) {
+            return 0;
+        }
+        return mCursor.getCount();
+    }
+
+    public void swapCursor(Cursor newCursor) {
+        mCursor = newCursor;
+        notifyDataSetChanged();
+    }
+
+    public Cursor getCursor() {
+        return mCursor;
+    }
+
+    Movie convertContentValuesToUXFormat(Cursor cursor) {
+        ContentValues cv = new ContentValues();
+        DatabaseUtils.cursorRowToContentValues(cursor, cv);
+        return new Movie(cv);
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @Bind(R.id.poster)
         SimpleDraweeView mPoster;
+        Long movieId;
 
         public MovieViewHolder(View v) {
             super(v);
             ButterKnife.bind(this, v);
+            v.setOnClickListener(this);
         }
 
-        public void bind(Movie movie) {
-            mPoster.setImageURI(movie.getPosterPathUri());
+        public void bind(Cursor cursor) {
+//            Movie movie = convertContentValuesToUXFormat(cursor);
+//            mPoster.setImageURI(movie.getPosterPathUri());
+            final Uri posterPath = Movie.getPosterPathUri(cursor.getString(MoviesFragment.COLUMN_POSTER_PATH));
+            mPoster.setImageURI(posterPath);
+            movieId = cursor.getLong(MoviesFragment.COLUMN_ID);
+            Log.d("MovieAdapter", posterPath.toString());
         }
 
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(mContext, MovieDetailActivity.class);
-//            intent.putExtra()
+            intent.setData(MovieEntry.buildMovieDetailUri(movieId));
             mContext.startActivity(intent);
         }
     }

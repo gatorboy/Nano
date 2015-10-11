@@ -39,8 +39,9 @@
         </activity>
         <provider
             android:name=".data.MovieProvider"
-            android:authorities="com.smenedi.nano"/>
-
+            android:authorities="com.smenedi.nano"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
 
 </manifest>

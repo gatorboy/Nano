@@ -70,7 +70,8 @@ public class MovieProvider extends ContentProvider {
     }
 
     private Cursor queryMovieDetail(Uri uri, String[] projection, String sortOrder) {
-        return sQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, sMovieSelection, new String[] { uri.getLastPathSegment() }, null, null, sortOrder);
+//        return sQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, sMovieSelection, new String[] { uri.getLastPathSegment() }, null, null, sortOrder);
+        return mOpenHelper.getReadableDatabase().query(MovieEntry.TABLE_NAME, projection, sMovieSelection, new String[] { uri.getLastPathSegment() }, null, null, sortOrder);
     }
 
     @Override

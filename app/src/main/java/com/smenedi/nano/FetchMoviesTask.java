@@ -20,30 +20,24 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 /**
  * Created by smenedi on 10/7/15.
  */
-public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
+public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-    private RecyclerView mRecyclerView;
-    private List<Movie> mMovieList;
     private Context mContext;
 
-    public FetchMoviesTask(Context context, List<Movie> movieList, RecyclerView recyclerView) {
+    public FetchMoviesTask(Context context) {
         mContext = context;
-        mMovieList = movieList;
-        mRecyclerView = recyclerView;
     }
 
     @Override
-    protected List<Movie> doInBackground(String... params) {
+    protected Void doInBackground(String... params) {
         if (params.length == 0) {
             return null;
         }
@@ -85,7 +79,8 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
                 return null;
             }
             movieJsonStr = buffer.toString();
-        } catch (IOException e) {
+            getMovieDataFromJson(movieJsonStr, params[0]);
+        } catch (IOException | JSONException e) {
             Log.e("FetchMoviesTask", "Error " + e.getMessage());
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
@@ -102,23 +97,20 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
                 }
             }
         }
-        try {
-            return getMovieDataFromJson(movieJsonStr, params[0]);
-        } catch (JSONException e) {
-            return null;
-        }
+
+        return null;
     }
 
-    @Override
+    /*@Override
     protected void onPostExecute(List<Movie> results) {
         mMovieList.clear();
         if (results != null && results.size() != 0) {
             mMovieList.addAll(results);
             mRecyclerView.getAdapter().notifyDataSetChanged();
         }
-    }
+    }*/
 
-    private List<Movie> getMovieDataFromJson(String movieJsonStr, String sortOrder) throws JSONException {
+    private void getMovieDataFromJson(String movieJsonStr, String sortOrder) throws JSONException {
         // These are the names of the JSON objects that need to be extracted.
         final String RESULTS = "results";
         JSONObject moviesJSON = new JSONObject(movieJsonStr);
@@ -143,15 +135,16 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
             cVVector.add(movieValues);
         }
 
-
+        int inserted = 0;
         // add to database
         if ( cVVector.size() > 0 ) {
             ContentValues[] cvArray = new ContentValues[cVVector.size()];
             cVVector.toArray(cvArray);
-            mContext.getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
+            inserted = mContext.getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
         }
+        Log.d(LOG_TAG, "FetchMoviesTask Complete. " + inserted + " Inserted");
 
-        // Sort order:  Ascending, by date.
+ /*       // Sort order:  Ascending, by date.
         String movieSortOrder;
         if(sortOrder.equals("popularity.desc")) {
             movieSortOrder = MovieEntry.COLUMN_POPULARITY + " DESC";
@@ -168,7 +161,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
                 cVVector.add(cv);
             } while (cur.moveToNext());
         }
-        return convertContentValuesToUXFormat(cVVector);
+        return convertContentValuesToUXFormat(cVVector);*/
     }
 
     List<Movie> convertContentValuesToUXFormat(Vector<ContentValues> cvv) {

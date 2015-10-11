@@ -1,14 +1,18 @@
 package com.smenedi.nano;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.smenedi.nano.data.MovieContract.MovieEntry;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,12 +25,24 @@ import android.view.ViewGroup;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MoviesFragment extends Fragment {
+public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> {
+
+    private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
+    private static final int MOVIE_LOADER = R.id.movie_loader_id;
+
+    //Projection
+    private static final String[] MOVIE_LIST_PROJECTION = {
+            MovieEntry.COLUMN_MOVIE_ID,
+            MovieEntry.COLUMN_POSTER_PATH
+    };
+
+    static final int COLUMN_ID = 0;
+    static final int COLUMN_POSTER_PATH = 1;
 
     private static final String SORT_ORDER_FORMAT = "%s.desc";
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
-    private List<Movie> mMovieList;
+    MoviesAdapter mMoviesAdapter;
 
     public MoviesFragment() {
     }
@@ -50,9 +66,8 @@ public class MoviesFragment extends Fragment {
     }
 
     private void updateMovies() {
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getActivity(), mMovieList, mRecyclerView);
-        fetchMoviesTask.execute(String.format(SORT_ORDER_FORMAT, PreferenceManager.getDefaultSharedPreferences(getContext())
-                                                                                  .getString(getString(R.string.key_pref_sort_order), getString(R.string.value_pref_sort_order_default))));
+        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getActivity());
+        fetchMoviesTask.execute(getSortOrder());
     }
 
     @Override
@@ -72,105 +87,61 @@ public class MoviesFragment extends Fragment {
     }
 
     private void setUpRecylerView() {
-        mMovieList = new ArrayList<>();
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        mRecyclerView.setAdapter(new MoviesAdapter(getContext(), mMovieList));
+
+//        Uri movieListUri = MovieEntry.buildMovieListUri();
+//        Cursor cur = getActivity().getContentResolver().query(movieListUri, null, null, null, getSqlSortOrder());
+//        Vector<ContentValues> cVVector = new Vector<>(cur.getCount());
+//        if (cur.moveToFirst()) {
+//            do {
+//                ContentValues cv = new ContentValues();
+//                DatabaseUtils.cursorRowToContentValues(cur, cv);
+//                cVVector.add(cv);
+//            } while (cur.moveToNext());
+//        }
+//        mMovieList = convertContentValuesToUXFormat(cVVector);
+        mMoviesAdapter = new MoviesAdapter(getContext());
+        mRecyclerView.setAdapter(mMoviesAdapter);
     }
 
-/*
-    public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
-        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-        @Override
-        protected List<Movie> doInBackground(String... params) {
-            if (params.length == 0) {
-                return null;
-            }
 
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
 
-            // Will contain the raw JSON response as a string.
-            String movieJsonStr = null;
+    private String getSortOrder() {
+        return String.format(SORT_ORDER_FORMAT, PreferenceManager.getDefaultSharedPreferences(getContext())
+                                                                 .getString(getString(R.string.key_pref_sort_order), getString(R.string.value_pref_sort_order_default)));
+    }
 
-            try {
-                URL url = ApiRequests.getMoviesUrl(params[0]);
-                Log.d(LOG_TAG, "Built URI: " + url.toString());
-
-                // Create the request to OpenWeatherMap, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                movieJsonStr = buffer.toString();
-            } catch (IOException e) {
-                Log.e("FetchMoviesTask", "Error " + e.getMessage());
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e("FetchMoviesTask", "Error closing stream", e);
-                    }
-                }
-            }
-            try {
-                return getMovieDataFromJson(movieJsonStr);
-            } catch (JSONException e) {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<Movie> results) {
-            mMovieList.clear();
-            if (results != null && results.size() != 0) {
-                mMovieList.addAll(results);
-                mRecyclerView.getAdapter().notifyDataSetChanged();
-            }
-        }
-
-        private List<Movie> getMovieDataFromJson(String movieJsonStr) throws JSONException {
-            // These are the names of the JSON objects that need to be extracted.
-            final String RESULTS = "results";
-            JSONObject moviesJSON = new JSONObject(movieJsonStr);
-            JSONArray moviesArray = moviesJSON.getJSONArray(RESULTS);
-            final int len = moviesArray.length();
-            final List<Movie> movies = new ArrayList<>();
-            for (int i = 0; i < len; i++) {
-                movies.add(new Movie(moviesArray.getJSONObject(i)));
-            }
-            return movies;
+    private String getSqlSortOrder() {
+        if (getSortOrder().equals("popularity.desc")) {
+            return MovieEntry.COLUMN_POPULARITY + " DESC";
+        } else {
+            return MovieEntry.COLUMN_RATING + " DESC";
         }
     }
-*/
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri movieListUri = MovieEntry.buildMovieListUri();
+        return new CursorLoader(getActivity(), movieListUri, MOVIE_LIST_PROJECTION, null, null, getSqlSortOrder());
+    }
+
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mMoviesAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mMoviesAdapter.swapCursor(null);
+    }
 }
