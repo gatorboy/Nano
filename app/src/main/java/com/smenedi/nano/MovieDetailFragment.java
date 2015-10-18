@@ -14,6 +14,7 @@ import butterknife.ButterKnife;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -53,8 +54,10 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     static final int COLUMN_RATING = 3;
     static final int COLUMN_OVERVIEW = 4;
     private static final String DATE_FORMAT = "yyyy-mm-dd";
+    public static final String DETAIL_URI = "URI";
 
     private String mShareMovieDetails;
+    private Uri mMovieDetailUri;
     private ShareActionProvider mShareActionProvider;
 
     //views
@@ -78,6 +81,10 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        if(bundle!=null){
+            mMovieDetailUri = bundle.getParcelable(DETAIL_URI);
+        }
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, view);
         return view;
@@ -120,11 +127,10 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null) {
-            return null;
+        if (null != mMovieDetailUri) {
+            return new CursorLoader(getActivity(), mMovieDetailUri, MOVIE_DETAIL_PROJECTION, null, null, null);
         }
-        return new CursorLoader(getActivity(), intent.getData(), MOVIE_DETAIL_PROJECTION, null, null, null);
+        return null;
     }
 
     @Override

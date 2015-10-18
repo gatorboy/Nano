@@ -1,8 +1,32 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="AppTheme.Base"/>
+
+    <!-- Since we are using the toolbar, we need to remove the action, and hence we inherit from the NoActionBar theme -->
+    <style name="AppTheme.Base" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <!-- This is color of the bar where the signal strength and other phone indicators are displayed -->
+        <item name="colorPrimaryDark">@color/primaryColorDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionBarStyle">@style/AppTheme.AppBar</item>
+    </style>
+    <style name="AppTheme.AppBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="displayOptions">useLogo|showHome</item>
+        <item name="logo">@mipmap/ic_launcher</item>
+    </style>
+
+    <!-- Main activity theme. -->
+    <style name="ForecastTheme" parent="AppTheme">
+        <item name="actionBarStyle">@style/ActionBar.Solid.Sunshine.NoTitle</item>
+    </style>
+
+    <!-- main activity action bar styles -->
+    <style name="ActionBar.Solid.Sunshine.NoTitle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="displayOptions">useLogo|showHome</item>
+        <item name="logo">@mipmap/ic_launcher</item>
     </style>
 
     <style name="app_buttons">

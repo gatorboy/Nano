@@ -2,14 +2,14 @@ package com.smenedi.nano;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.smenedi.nano.MoviesAdapter.MovieViewHolder;
-import com.smenedi.nano.data.MovieContract.MovieEntry;
+import com.smenedi.nano.events.MovieItemClickEvent;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -28,6 +28,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     Context mContext;
     private Cursor mCursor;
+    private int mSelectedPosition = RecyclerView.NO_POSITION;
 
     public MoviesAdapter(Context context) {
         mContext = context;
@@ -43,7 +44,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     @Override
     public void onBindViewHolder(MovieViewHolder viewHolder, int position) {
         mCursor.moveToPosition(position);
-        viewHolder.bind(mCursor);
+        viewHolder.bind(mCursor, position);
     }
 
     @Override
@@ -59,6 +60,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         notifyDataSetChanged();
     }
 
+    public int getSelectedPosition() {
+        return mSelectedPosition;
+    }
     public Cursor getCursor() {
         return mCursor;
     }
@@ -74,6 +78,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         @Bind(R.id.poster)
         SimpleDraweeView mPoster;
         Long movieId;
+        int position;
 
         public MovieViewHolder(View v) {
             super(v);
@@ -81,21 +86,27 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
             v.setOnClickListener(this);
         }
 
-        public void bind(Cursor cursor) {
+        public void bind(Cursor cursor, int pos) {
 //            Movie movie = convertContentValuesToUXFormat(cursor);
 //            mPoster.setImageURI(movie.getPosterPathUri());
             final Uri posterPath = Movie.getPosterPathUri(cursor.getString(MoviesFragment.COLUMN_POSTER_PATH));
             mPoster.setImageURI(posterPath);
+            mPoster.setContentDescription(cursor.getString(MoviesFragment.COLUMN_ORIGINAL_TITLE));
             movieId = cursor.getLong(MoviesFragment.COLUMN_ID);
+            position = pos;
             Log.d("MovieAdapter", posterPath.toString());
         }
 
         @Override
         public void onClick(View v) {
-            final Intent intent = new Intent(mContext, MovieDetailActivity.class);
+            EventBus.getDefault().post(new MovieItemClickEvent(movieId, position));
+            mSelectedPosition = position;
+            /*final Intent intent = new Intent(mContext, MovieDetailActivity.class);
             intent.setData(MovieEntry.buildMovieDetailUri(movieId));
-            mContext.startActivity(intent);
+            mContext.startActivity(intent);*/
         }
     }
+
+
 
 }

@@ -38,6 +38,7 @@ dependencies {
     //third party dependencies
     compile 'com.jakewharton:butterknife:7.0.1' // clean code for binding views
     compile 'com.facebook.fresco:fresco:0.7.0' //for image caching and loading
+    compile 'de.greenrobot:eventbus:2.4.0' // Event bus library for decoupling components
 
 }
 

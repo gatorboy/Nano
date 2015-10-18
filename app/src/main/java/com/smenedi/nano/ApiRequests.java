@@ -18,7 +18,7 @@ public class ApiRequests {
     private static final String API_KEY_QUERY_PARAMETER = "api_key";
 
 
-    static Uri getPosterUri(String imagePath) {
+    public static Uri getPosterUri(String imagePath) {
         final Uri.Builder builder = new Uri.Builder().scheme(BuildConfig.IMAGE_HOST_SCHEME)
                                                      .authority(BuildConfig.IMAGE_HOST)
                                                      .appendEncodedPath(IMAGES_API_PATH)
@@ -26,7 +26,7 @@ public class ApiRequests {
         return builder.build();
     }
 
-    static URL getMoviesUrl(String sortBy) throws MalformedURLException {
+    public static URL getMoviesUrl(String sortBy) throws MalformedURLException {
         final Uri.Builder builder = new Uri.Builder().scheme(BuildConfig.SERVICE_HOST_SCHEME)
                                                      .authority(BuildConfig.SERVICE_HOST)
                                                      .appendEncodedPath(MOVIES_API_PATH)

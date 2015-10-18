@@ -32,16 +32,22 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MoviesActivity">
+            android:parentActivityName=".MoviesActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.smenedi.nano.MoviesActivity" />
         </activity>
+
         <provider
             android:name=".data.MovieProvider"
             android:authorities="com.smenedi.nano"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <service
+            android:name=".service.MovieService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

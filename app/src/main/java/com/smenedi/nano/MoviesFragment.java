@@ -1,6 +1,7 @@
 package com.smenedi.nano;
 
 import com.smenedi.nano.data.MovieContract.MovieEntry;
+import com.smenedi.nano.service.MovieService;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,22 +28,30 @@ import android.view.ViewGroup;
  */
 public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
+
     private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
     private static final int MOVIE_LOADER = R.id.movie_loader_id;
 
     //Projection
     private static final String[] MOVIE_LIST_PROJECTION = {
             MovieEntry.COLUMN_MOVIE_ID,
-            MovieEntry.COLUMN_POSTER_PATH
+            MovieEntry.COLUMN_POSTER_PATH,
+            MovieEntry.COLUMN_ORIGINAL_TITLE
     };
 
     static final int COLUMN_ID = 0;
     static final int COLUMN_POSTER_PATH = 1;
+    static final int COLUMN_ORIGINAL_TITLE = 2;
+
 
     private static final String SORT_ORDER_FORMAT = "%s.desc";
+    private static final String SELECTED_KEY = "selected_position";
+
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
     MoviesAdapter mMoviesAdapter;
+
+    private int mSelectedPosition;
 
     public MoviesFragment() {
     }
@@ -66,8 +75,9 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     }
 
     private void updateMovies() {
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getActivity());
-        fetchMoviesTask.execute(getSortOrder());
+//        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getActivity());
+//        fetchMoviesTask.execute(getSortOrder());
+        MovieService.startActionUpdateMovies(getActivity(), getSortOrder());
     }
 
     @Override
@@ -80,16 +90,17 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
             Bundle savedInstanceState) {
         final View layout = inflater.inflate(R.layout.fragment_movies, container, false);
         ButterKnife.bind(this, layout);
-
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            mSelectedPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
         setUpRecylerView();
-
         return layout;
     }
 
     private void setUpRecylerView() {
 
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
 
 //        Uri movieListUri = MovieEntry.buildMovieListUri();
 //        Cursor cur = getActivity().getContentResolver().query(movieListUri, null, null, null, getSqlSortOrder());
@@ -105,8 +116,6 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
         mMoviesAdapter = new MoviesAdapter(getContext());
         mRecyclerView.setAdapter(mMoviesAdapter);
     }
-
-
 
 
     private String getSortOrder() {
@@ -138,10 +147,24 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mMoviesAdapter.swapCursor(data);
+        //scroll to last scrolled position
+        if (mSelectedPosition != RecyclerView.NO_POSITION) {
+            mRecyclerView.smoothScrollToPosition(mSelectedPosition);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mMoviesAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        int position = (mMoviesAdapter != null) ? mMoviesAdapter.getSelectedPosition() : RecyclerView.NO_POSITION;
+        //Save scrolling position
+        if (position != RecyclerView.NO_POSITION) {
+            outState.putInt(SELECTED_KEY, position);
+        }
+        super.onSaveInstanceState(outState);
     }
 }
