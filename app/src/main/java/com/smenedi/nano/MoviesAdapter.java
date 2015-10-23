@@ -110,7 +110,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         @Override
         public void onClick(View v) {
             mSelectedPosition = position;
-            EventBus.getDefault().post(new MovieItemClickEvent(movieId, position));
+            EventBus.getDefault().post(new MovieItemClickEvent(v, movieId, position));
             /*final Intent intent = new Intent(mContext, MovieDetailActivity.class);
             intent.setData(MovieEntry.buildMovieDetailUri(movieId));
             mContext.startActivity(intent);*/

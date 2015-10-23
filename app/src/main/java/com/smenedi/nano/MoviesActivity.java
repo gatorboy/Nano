@@ -7,8 +7,12 @@ import com.smenedi.nano.sync.MoviesSyncAdapter;
 import de.greenrobot.event.EventBus;
 
 import android.content.Intent;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +28,8 @@ public class MoviesActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
+
+        setAnimations();
 
         mSortOrder = Utility.getSortOrder(this);
         if (findViewById(R.id.movie_detail_container) != null) {
@@ -109,10 +115,17 @@ public class MoviesActivity extends AppCompatActivity {
         } else {
 //            View v = getFragmentManager().findFragmentById(R.id.fragment_movies).getfindViewById(R.id.poster);
 //            Log.d(LOG_TAG, "view found :"+ (v==null));
-//            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, )
+            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, event.mView, getString(R.string.poster_transition));
             final Intent intent = new Intent(this, MovieDetailActivity.class);
             intent.setData(MovieEntry.buildMovieDetailUri(event.movieId));
-            startActivity(intent);
+            startActivity(intent, optionsCompat.toBundle());
+        }
+    }
+
+    private void setAnimations() {
+        if(VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            getWindow().setSharedElementEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
+            getWindow().setSharedElementReturnTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
         }
     }
 

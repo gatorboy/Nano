@@ -1,8 +1,11 @@
 package com.smenedi.nano;
 
 import android.content.Intent;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,6 +15,9 @@ public class MovieDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+
+        setAnimations();
+
         if (savedInstanceState == null) {
             //if the details are displayed in a separate activity
             final Bundle arguments = new Bundle();
@@ -27,6 +33,13 @@ public class MovieDetailActivity extends AppCompatActivity {
         if(getSupportActionBar()!=null){
             getSupportActionBar().setElevation(0f);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    private void setAnimations() {
+        if(VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            getWindow().setSharedElementEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
+            getWindow().setSharedElementReturnTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
         }
     }
 
@@ -49,7 +62,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         } else if (item.getItemId() == android.R.id.home) {
-            finish();
+            onBackPressed();
             return true;
         }
 

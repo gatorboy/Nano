@@ -47,5 +47,6 @@
         <item name="android:paddingLeft">@dimen/movie_detail_padding_start</item>
         <item name="android:paddingRight">@dimen/movie_detail_padding_end</item>
         <item name="android:paddingStart">@dimen/movie_detail_padding_start</item>
+        <item name="android:paddingTop">@dimen/movie_detail_padding_top</item>
     </style>
 </resources>

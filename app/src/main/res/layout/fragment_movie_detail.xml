@@ -16,8 +16,9 @@
             android:background="@color/title_bg"
             android:gravity="center_vertical"
             android:id="@+id/title"
-            android:layout_height="@dimen/title_height"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:paddingBottom="@dimen/movie_detail_padding_top"
             android:textColor="@android:color/white"
             android:textSize="@dimen/title_size"/>
 
@@ -25,14 +26,13 @@
             style="@style/detail_margins"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/movie_detail_padding_bottom"
-            android:paddingTop="@dimen/movie_detail_padding_top">
+            android:orientation="horizontal">
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/poster"
                 android:layout_height="@dimen/poster_height"
                 android:layout_width="@dimen/poster_width"
+                android:transitionName="@string/poster_transition"
                 fresco:placeholderImageScaleType="fitXY"/>
 
             <LinearLayout
