@@ -164,7 +164,7 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
         try {
             date = sdf.parse(dateString);
         } catch (ParseException e) {
-            Log.e(LOG_TAG, "Invalid release date");
+            Log.e(LOG_TAG, "Invalid release date: " + dateString);
             return 0;
         }
         Calendar calendar = Calendar.getInstance();

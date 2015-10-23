@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     public static final String KEY_MOVIE = "com.smenedi.nano.movie";
     private static final String LOG_TAG = MoviesAdapter.class.getSimpleName();
+    public static final int RESET_COUNT = -1;
 
     Context mContext;
     private Cursor mCursor;
@@ -55,9 +56,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         return mCursor.getCount();
     }
 
-    public void swapCursor(Cursor newCursor) {
+    public void swapCursor(int oldCount, Cursor newCursor) {
         mCursor = newCursor;
-        notifyDataSetChanged();
+        if(oldCount == RESET_COUNT) {
+            notifyDataSetChanged();
+            return;
+        }
+        int newCount = newCursor.getCount();
+        if (newCount > oldCount ) {
+            notifyItemRangeInserted(oldCount, newCount - oldCount);
+        } else if (newCount <= oldCount ) {
+            notifyDataSetChanged();
+        }
     }
 
     public int getSelectedPosition() {
@@ -94,13 +104,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
             mPoster.setContentDescription(cursor.getString(MoviesFragment.COLUMN_ORIGINAL_TITLE));
             movieId = cursor.getLong(MoviesFragment.COLUMN_ID);
             position = pos;
-            Log.d("MovieAdapter", posterPath.toString());
+            Log.d("MovieAdapter", movieId + " = " + cursor.getString(MoviesFragment.COLUMN_ORIGINAL_TITLE) + " = " + posterPath.toString());
         }
 
         @Override
         public void onClick(View v) {
-            EventBus.getDefault().post(new MovieItemClickEvent(movieId, position));
             mSelectedPosition = position;
+            EventBus.getDefault().post(new MovieItemClickEvent(movieId, position));
             /*final Intent intent = new Intent(mContext, MovieDetailActivity.class);
             intent.setData(MovieEntry.buildMovieDetailUri(movieId));
             mContext.startActivity(intent);*/

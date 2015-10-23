@@ -2,12 +2,14 @@ package com.smenedi.nano;
 
 import com.smenedi.nano.data.MovieContract.MovieEntry;
 import com.smenedi.nano.events.MovieItemClickEvent;
+import com.smenedi.nano.sync.MoviesSyncAdapter;
 
 import de.greenrobot.event.EventBus;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,13 +17,17 @@ public class MoviesActivity extends AppCompatActivity {
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private final String LOG_TAG = MoviesActivity.class.getSimpleName();
     private boolean mTwoPane;
+    private String mSortOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
 
+        mSortOrder = Utility.getSortOrder(this);
         if (findViewById(R.id.movie_detail_container) != null) {
+            Log.d(LOG_TAG, "Set details in a two pane layout");
             mTwoPane = true;
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
@@ -30,10 +36,12 @@ public class MoviesActivity extends AppCompatActivity {
             }
         } else {
             mTwoPane = false;
-            if(getSupportActionBar()!=null){
+            if (getSupportActionBar() != null) {
                 getSupportActionBar().setElevation(0f);
             }
         }
+
+        MoviesSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
@@ -45,6 +53,15 @@ public class MoviesActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        String sortOrder = Utility.getSortOrder(this);
+        if (sortOrder != null && !sortOrder.equals(mSortOrder)) {
+            mSortOrder = sortOrder;
+            Log.d(LOG_TAG, "Updated Sort Order in onResume");
+            MoviesFragment ff = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_movies);
+            if (null != ff) {
+                ff.onSortChanged();
+            }
+        }
     }
 
     @Override
@@ -52,7 +69,6 @@ public class MoviesActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
-
 
 
     @Override
@@ -80,7 +96,7 @@ public class MoviesActivity extends AppCompatActivity {
 
     @SuppressWarnings("unused") // This is actually used via Event Bus
     public void onEventMainThread(MovieItemClickEvent event) {
-        if(mTwoPane) {
+        if (mTwoPane) {
             final Bundle arguments = new Bundle();
             arguments.putParcelable(MovieDetailFragment.DETAIL_URI, MovieEntry.buildMovieDetailUri(event.movieId));
 
@@ -91,9 +107,14 @@ public class MoviesActivity extends AppCompatActivity {
                                        .replace(R.id.movie_detail_container, movieDetailFragment, DETAILFRAGMENT_TAG)
                                        .commit();
         } else {
+//            View v = getFragmentManager().findFragmentById(R.id.fragment_movies).getfindViewById(R.id.poster);
+//            Log.d(LOG_TAG, "view found :"+ (v==null));
+//            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, )
             final Intent intent = new Intent(this, MovieDetailActivity.class);
             intent.setData(MovieEntry.buildMovieDetailUri(event.movieId));
             startActivity(intent);
         }
     }
+
+
 }

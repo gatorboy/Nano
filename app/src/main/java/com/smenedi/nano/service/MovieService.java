@@ -33,6 +33,7 @@ public class MovieService extends IntentService {
     private static final String LOG_TAG = MovieService.class.getSimpleName();
     private static final String ACTION_UPDATE_MOVIES = "com.smenedi.nano.service.action.UPDATE_MOVIES";
     private static final String EXTRA_SORT_ORDER = "com.smenedi.nano.service.extra.SORT_ORDER";
+    private static final String EXTRA_PAGE_NUMBER = "com.smenedi.nano.service.extra.PAGE_NUMBER";
 
     /**
      * Starts this service to perform action Update Movies with the given parameters. If
@@ -40,10 +41,11 @@ public class MovieService extends IntentService {
      *
      * @see IntentService
      */
-    public static void startActionUpdateMovies(Context context, String sortOrder) {
+    public static void startActionUpdateMovies(Context context, String sortOrder, int page) {
         Intent intent = new Intent(context, MovieService.class);
         intent.setAction(ACTION_UPDATE_MOVIES);
         intent.putExtra(EXTRA_SORT_ORDER, sortOrder);
+        intent.putExtra(EXTRA_PAGE_NUMBER, page);
         context.startService(intent);
     }
 
@@ -58,7 +60,8 @@ public class MovieService extends IntentService {
             final String action = intent.getAction();
             if (ACTION_UPDATE_MOVIES.equals(action)) {
                 final String sortOrder = intent.getStringExtra(EXTRA_SORT_ORDER);
-                handleActionUpdateMovies(sortOrder);
+                final int page = intent.getIntExtra(EXTRA_PAGE_NUMBER, 1);
+                handleActionUpdateMovies(sortOrder, page);
             }
         }
     }
@@ -67,7 +70,7 @@ public class MovieService extends IntentService {
      * Handle action Foo in the provided background thread with the provided
      * parameters.
      */
-    private void handleActionUpdateMovies(String sortOrder) {
+    private void handleActionUpdateMovies(String sortOrder, int page) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -76,39 +79,43 @@ public class MovieService extends IntentService {
         String movieJsonStr;
 
         try {
-            URL url = ApiRequests.getMoviesUrl(sortOrder);
-            Log.d(LOG_TAG, "Built URI: " + url.toString());
+//            for (int page = 1; page <= pages; page++) {
 
-            // Create the request to OpenWeatherMap, and open the connection
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
+                URL url = ApiRequests.getMoviesUrl(sortOrder, page);
+                Log.d(LOG_TAG, "Built URI: " + url.toString());
 
-            // Read the input stream into a String
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuilder buffer = new StringBuilder();
-            if (inputStream == null) {
-                // Nothing to do.
-                return;
-            }
-            reader = new BufferedReader(new InputStreamReader(inputStream));
+                // Create the request to OpenWeatherMap, and open the connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
 
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
-                buffer.append(line).append("\n");
-            }
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuilder buffer = new StringBuilder();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            if (buffer.length() == 0) {
-                // Stream was empty.  No point in parsing.
-                return;
-            }
-            movieJsonStr = buffer.toString();
-            getMovieDataFromJson(movieJsonStr);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line).append("\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return;
+                }
+                movieJsonStr = buffer.toString();
+                getMovieDataFromJson(movieJsonStr);
+//            }
+
         } catch (IOException | JSONException e) {
-            Log.e("FetchMoviesTask", "Error " + e.getMessage());
+            Log.e(LOG_TAG, "Error " + e.getMessage());
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
             return;
@@ -120,7 +127,7 @@ public class MovieService extends IntentService {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e("FetchMoviesTask", "Error closing stream", e);
+                    Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
         }
@@ -160,7 +167,7 @@ public class MovieService extends IntentService {
             cVVector.toArray(cvArray);
             inserted = getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
         }
-        Log.d(LOG_TAG, "FetchMoviesTask Complete. " + inserted + " Inserted");
+        Log.d(LOG_TAG, "Movies fetching Complete. " + inserted + " Inserted");
 
  /*       // Sort order:  Ascending, by date.
         String movieSortOrder;

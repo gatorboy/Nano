@@ -1,7 +1,9 @@
 package com.smenedi.nano;
 
+import com.smenedi.nano.data.MovieContract;
 import com.smenedi.nano.data.MovieContract.MovieEntry;
 import com.smenedi.nano.service.MovieService;
+import com.smenedi.nano.sync.MoviesSyncAdapter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -16,6 +18,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.OnScrollListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,7 +48,6 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     static final int COLUMN_ORIGINAL_TITLE = 2;
 
 
-    private static final String SORT_ORDER_FORMAT = "%s.desc";
     private static final String SELECTED_KEY = "selected_position";
 
     @Bind(R.id.recycler_view)
@@ -52,6 +55,9 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     MoviesAdapter mMoviesAdapter;
 
     private int mSelectedPosition;
+    private boolean isListLoading = true;
+    private int lastLoadedItemCount = 0;
+    private static final int THRESHOLD_ITEM_COUNT = 5;
 
     public MoviesFragment() {
     }
@@ -60,7 +66,9 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "onCreate");
         setHasOptionsMenu(true);
+        updateMovies();
     }
 
     @Override
@@ -68,16 +76,19 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
         inflater.inflate(R.menu.moviesfragment, menu);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateMovies();
+    void onSortChanged() {
+        Log.d(LOG_TAG, "Sort Changed. Update Movies");
+        //Clear DB
+        getActivity().getContentResolver().delete(MovieContract.MovieEntry.buildMovieListUri(), null, null);
+        //set page to 1
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putInt(getString(R.string.key_pref_page_number), 1).apply();
+        MovieService.startActionUpdateMovies(getActivity(), Utility.getSortOrder(getActivity()), 1);
+        lastLoadedItemCount = 0;
+//        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
-
     private void updateMovies() {
-//        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getActivity());
-//        fetchMoviesTask.execute(getSortOrder());
-        MovieService.startActionUpdateMovies(getActivity(), getSortOrder());
+//        MovieService.startActionUpdateMovies(getActivity(), getSortOrder());
+        MoviesSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
@@ -98,38 +109,38 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     }
 
     private void setUpRecylerView() {
-
+        Log.d(LOG_TAG, "setUpRecylerView");
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), getResources().getInteger(R.integer.grid_width));
+        mRecyclerView.setLayoutManager(gridLayoutManager);
 
-//        Uri movieListUri = MovieEntry.buildMovieListUri();
-//        Cursor cur = getActivity().getContentResolver().query(movieListUri, null, null, null, getSqlSortOrder());
-//        Vector<ContentValues> cVVector = new Vector<>(cur.getCount());
-//        if (cur.moveToFirst()) {
-//            do {
-//                ContentValues cv = new ContentValues();
-//                DatabaseUtils.cursorRowToContentValues(cur, cv);
-//                cVVector.add(cv);
-//            } while (cur.moveToNext());
-//        }
-//        mMovieList = convertContentValuesToUXFormat(cVVector);
         mMoviesAdapter = new MoviesAdapter(getContext());
         mRecyclerView.setAdapter(mMoviesAdapter);
+        mRecyclerView.addOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                final int totalItemCount = gridLayoutManager.getItemCount();
+                final int lastVisibleItemPosition = gridLayoutManager.findLastVisibleItemPosition();
+
+                if (isListLoading) {
+                    if (totalItemCount > lastLoadedItemCount) {
+                        isListLoading = false;
+                        lastLoadedItemCount = totalItemCount;
+                    }
+                } else if (lastVisibleItemPosition >= totalItemCount - THRESHOLD_ITEM_COUNT) {
+                    isListLoading = true;
+                    int lastLoadedPageNumber = Utility.getPageNumber(getActivity());
+                    loadMorePages(++lastLoadedPageNumber);
+                }
+            }
+        });
     }
 
-
-    private String getSortOrder() {
-        return String.format(SORT_ORDER_FORMAT, PreferenceManager.getDefaultSharedPreferences(getContext())
-                                                                 .getString(getString(R.string.key_pref_sort_order), getString(R.string.value_pref_sort_order_default)));
+    private void loadMorePages(int page) {
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putInt(getString(R.string.key_pref_page_number), page).apply();
+        MovieService.startActionUpdateMovies(getActivity(), Utility.getSortOrder(getActivity()), page);
     }
 
-    private String getSqlSortOrder() {
-        if (getSortOrder().equals("popularity.desc")) {
-            return MovieEntry.COLUMN_POPULARITY + " DESC";
-        } else {
-            return MovieEntry.COLUMN_RATING + " DESC";
-        }
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -140,22 +151,29 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri movieListUri = MovieEntry.buildMovieListUri();
-        return new CursorLoader(getActivity(), movieListUri, MOVIE_LIST_PROJECTION, null, null, getSqlSortOrder());
+//        return new CursorLoader(getActivity(), movieListUri, MOVIE_LIST_PROJECTION, null, null, Utility.getSqlSortOrder(getActivity()));
+        return new CursorLoader(getActivity(), movieListUri, MOVIE_LIST_PROJECTION, null, null, null);
     }
 
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mMoviesAdapter.swapCursor(data);
+        Log.d(LOG_TAG, "onLoadFinished");
+        if (data != null) {
+            mMoviesAdapter.swapCursor(mMoviesAdapter.getItemCount(), data);
+        }
         //scroll to last scrolled position
+        if(mRecyclerView!= null) {
+//            mRecyclerView.scrollToPosition(currentPosition);
+        }
         if (mSelectedPosition != RecyclerView.NO_POSITION) {
-            mRecyclerView.smoothScrollToPosition(mSelectedPosition);
+//            mRecyclerView.smoothScrollToPosition(mSelectedPosition);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mMoviesAdapter.swapCursor(null);
+        mMoviesAdapter.swapCursor(MoviesAdapter.RESET_COUNT, null);
     }
 
     @Override

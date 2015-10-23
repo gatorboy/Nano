@@ -26,6 +26,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
         if(getSupportActionBar()!=null){
             getSupportActionBar().setElevation(0f);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
@@ -47,8 +48,12 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        } else if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 }

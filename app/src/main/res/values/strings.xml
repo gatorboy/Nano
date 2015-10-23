@@ -29,10 +29,15 @@
 
     <string name="key_pref_sort_order" translatable="false">sortOrder</string>
     <string name="value_pref_sort_order_default">@string/value_sortby_popularity</string>
+    <string name="key_pref_page_number">lastAccessedPageNumber</string>
     <string name="action_share">Share</string>
+
 
     <!--Movie detail -->
     <string name="format_rating"><xliff:g id="rating">%1.1f</xliff:g>/10</string>
 
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">nano.smenedi.com</string>
+    <string name="content_authority">com.smenedi.nano</string>
 
 </resources>

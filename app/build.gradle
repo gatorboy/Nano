@@ -40,6 +40,9 @@ dependencies {
     compile 'com.facebook.fresco:fresco:0.7.0' //for image caching and loading
     compile 'de.greenrobot:eventbus:2.4.0' // Event bus library for decoupling components
 
+
+    debugCompile 'com.facebook.stetho:stetho:1.2.0'
+
 }
 
 apply plugin: 'pmd'
