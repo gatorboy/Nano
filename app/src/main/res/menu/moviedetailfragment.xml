@@ -4,6 +4,6 @@
       tools:context="com.smenedi.nano.MovieDetailActivity">
       <item android:id="@+id/action_share"
             android:title="@string/action_share"
-            app:showAsAction="always"
-            app:actionProviderClass="android.support.v7.widget.ShareActionProvider" />
+            android:icon="@android:drawable/ic_menu_share"
+            app:showAsAction="always" />
 </menu>

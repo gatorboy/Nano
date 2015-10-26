@@ -20,8 +20,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -58,7 +56,7 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
 
     private String mShareMovieDetails;
     private Uri mMovieDetailUri;
-    private ShareActionProvider mShareActionProvider;
+//    private ShareActionProvider mShareActionProvider;
 
     //views
     @Bind(R.id.title)
@@ -98,9 +96,8 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
         // Retrieve the share menu item
         MenuItem menuItem = menu.findItem(R.id.action_share);
 
-        // Get the provider and hold onto it to set/change the share intent.
-        mShareActionProvider =
-                (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        /*// Get the provider and hold onto it to set/change the share intent.
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
 
         // Attach an intent to this ShareActionProvider.  You can update this at any time,
         // like when the user selects a new piece of data they might like to share.
@@ -108,7 +105,16 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
             mShareActionProvider.setShareIntent(createShareForecastIntent());
         } else {
             Log.d(LOG_TAG, "Share Action Provider is null?");
+        }*/
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_share) {
+            startActivity(Intent.createChooser(createShareForecastIntent(), "Share to"));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private Intent createShareForecastIntent() {
@@ -138,10 +144,10 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
         if(data.moveToFirst()){
             setViews(data);
 
-            // If onCreateOptionsMenu has already happened, we need to update the share intent now.
+            /*// If onCreateOptionsMenu has already happened, we need to update the share intent now.
             if (mShareActionProvider != null) {
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
-            }
+            }*/
         }
 
     }
@@ -149,10 +155,12 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     private void setViews(Cursor cursor) {
         mShareMovieDetails = cursor.getString(COLUMN_POSTER_PATH);
         mTitle.setText(cursor.getString(COLUMN_ORIGINAL_TITLE));
+        Log.d(LOG_TAG, "" + ApiRequests.getPosterUri(cursor.getString(COLUMN_POSTER_PATH)));
         mPoster.setImageURI(ApiRequests.getPosterUri(cursor.getString(COLUMN_POSTER_PATH)));
         mYearOfRelease.setText(String.valueOf(getYearOfRelease(cursor.getString(COLUMN_RELEASE_DATE))));
         mRating.setText(getActivity().getString(R.string.format_rating, cursor.getDouble(COLUMN_RATING)));
-        mOverview.setText(cursor.getString(COLUMN_OVERVIEW));
+//        mOverview.setText(cursor.getString(COLUMN_OVERVIEW));
+        mOverview.setText("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
     }
 
     private int getYearOfRelease(String dateString) {

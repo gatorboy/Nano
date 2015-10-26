@@ -5,11 +5,14 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MovieDetailActivity extends AppCompatActivity {
+
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,16 +33,21 @@ public class MovieDetailActivity extends AppCompatActivity {
                                        .add(R.id.movie_detail_container, movieDetailFragment)
                                        .commit();
         }
-        if(getSupportActionBar()!=null){
-            getSupportActionBar().setElevation(0f);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        // We are using the tool bar as a replacement for action, setup it up as such
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+            if(getSupportActionBar() != null) {
+                getSupportActionBar().setElevation(0f);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 
     private void setAnimations() {
         if(VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             getWindow().setSharedElementEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
-            getWindow().setSharedElementReturnTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
         }
     }
 

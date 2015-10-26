@@ -1,8 +1,24 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:id="@+id/fragment_movies"
-          android:layout_height="match_parent"
-          android:layout_width="match_parent"
-          android:name="com.smenedi.nano.MoviesFragment"
-          tools:context="com.smenedi.nano.MoviesFragment"
-          tools:layout="@layout/fragment_movies"/>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/cardview_dark_background"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    tools:context="com.smenedi.nano.MoviesActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <include layout="@layout/app_bar"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <fragment
+        android:id="@+id/fragment_movies"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:name="com.smenedi.nano.MoviesFragment"
+        tools:layout="@layout/fragment_movies"/>
+
+</android.support.design.widget.CoordinatorLayout>

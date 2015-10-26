@@ -1,14 +1,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
              xmlns:tools="http://schemas.android.com/tools"
+             android:background="@color/cardview_dark_background"
              android:layout_height="match_parent"
              android:layout_width="match_parent"
-             android:background="@color/cardview_dark_background"
              tools:context="com.smenedi.nano.MoviesFragment">
 
     <android.support.v7.widget.RecyclerView
+        android:clipToPadding="false"
         android:id="@+id/recycler_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:scrollbars="vertical"/>
+        android:paddingTop="?android:attr/actionBarSize"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </FrameLayout>

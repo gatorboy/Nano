@@ -12,6 +12,7 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Menu;
@@ -23,11 +24,18 @@ public class MoviesActivity extends AppCompatActivity {
     private boolean mTwoPane;
     private String mSortOrder;
 
+    Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
+
+        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        // We are using the tool bar as a replacement for action, setup it up as such
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+        }
 
         setAnimations();
 
@@ -124,8 +132,7 @@ public class MoviesActivity extends AppCompatActivity {
 
     private void setAnimations() {
         if(VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            getWindow().setSharedElementEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
-            getWindow().setSharedElementReturnTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
+            getWindow().setSharedElementExitTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
         }
     }
 
