@@ -1,14 +1,58 @@
-<!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:id="@+id/fragment"
-          android:name="com.smenedi.nano.MovieDetailFragment"
-          tools:layout="@layout/fragment_movie_detail"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"/>-->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:id="@+id/movie_detail_container"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.smenedi.nano.MovieDetailActivity"
-             tools:ignore="MergeRootFrame" />
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:fitsSystemWindows="true"
+                                                 android:id="@+id/main_content"
+                                                 android:layout_height="match_parent"
+                                                 android:layout_width="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:fitsSystemWindows="true"
+        android:id="@+id/appbar"
+        android:layout_height="@dimen/movie_detail_backdrop_height"
+        android:layout_width="match_parent"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:fitsSystemWindows="true"
+            android:id="@+id/collapsing_toolbar"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/backdrop"
+                android:layout_height="@dimen/movie_detail_backdrop_height"
+                android:layout_width="match_parent"
+                app:layout_collapseMode="parallax"
+                fresco:actualImageScaleType="fitXY"
+                fresco:placeholderImageScaleType="fitXY"/>
+
+            <include
+                layout="@layout/app_bar"
+                android:background="@android:drawable/screen_background_light_transparent"
+                app:layout_collapseMode="pin"/>
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/movie_detail_container"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.smenedi.nano.MovieDetailActivity"
+        tools:ignore="MergeRootFrame"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:clickable="true"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_width="wrap_content"
+        android:src="@android:drawable/arrow_down_float"
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="bottom|right|end"/>
+</android.support.design.widget.CoordinatorLayout>

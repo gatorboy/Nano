@@ -25,6 +25,9 @@
     <dimen name="movie_detail_detals_margin_start">24dp</dimen>
     <dimen name="year_size">24sp</dimen>
     <dimen name="movie_detail_padding_bottom">16dp</dimen>
+    <dimen name="movie_detail_backdrop_height">256dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
 
 
 </resources>

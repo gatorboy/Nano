@@ -43,7 +43,8 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
             MovieEntry.COLUMN_POSTER_PATH,
             MovieEntry.COLUMN_RELEASE_DATE,
             MovieEntry.COLUMN_RATING,
-            MovieEntry.COLUMN_OVERVIEW
+            MovieEntry.COLUMN_OVERVIEW,
+            MovieEntry.COLUMN_BACKDROP_PATH
     };
 
     static final int COLUMN_ORIGINAL_TITLE = 0;
@@ -51,6 +52,7 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     static final int COLUMN_RELEASE_DATE = 2;
     static final int COLUMN_RATING = 3;
     static final int COLUMN_OVERVIEW = 4;
+    static final int COLUMN_BACKDROP_PATH = 5;
     private static final String DATE_FORMAT = "yyyy-mm-dd";
     public static final String DETAIL_URI = "URI";
 
@@ -59,7 +61,7 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
 //    private ShareActionProvider mShareActionProvider;
 
     //views
-    @Bind(R.id.title)
+//    @Bind(R.id.title)
     TextView mTitle;
     @Bind(R.id.poster)
     SimpleDraweeView mPoster;
@@ -154,13 +156,15 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
 
     private void setViews(Cursor cursor) {
         mShareMovieDetails = cursor.getString(COLUMN_POSTER_PATH);
-        mTitle.setText(cursor.getString(COLUMN_ORIGINAL_TITLE));
-        Log.d(LOG_TAG, "" + ApiRequests.getPosterUri(cursor.getString(COLUMN_POSTER_PATH)));
+//        mTitle.setText(cursor.getString(COLUMN_ORIGINAL_TITLE));
         mPoster.setImageURI(ApiRequests.getPosterUri(cursor.getString(COLUMN_POSTER_PATH)));
         mYearOfRelease.setText(String.valueOf(getYearOfRelease(cursor.getString(COLUMN_RELEASE_DATE))));
         mRating.setText(getActivity().getString(R.string.format_rating, cursor.getDouble(COLUMN_RATING)));
-//        mOverview.setText(cursor.getString(COLUMN_OVERVIEW));
-        mOverview.setText("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+        mOverview.setText(cursor.getString(COLUMN_OVERVIEW));
+
+        if (getActivity().findViewById(R.id.backdrop) != null) {
+            ((SimpleDraweeView) getActivity().findViewById(R.id.backdrop)).setImageURI(ApiRequests.getBackdropUri(cursor.getString(COLUMN_BACKDROP_PATH)));
+        }
     }
 
     private int getYearOfRelease(String dateString) {

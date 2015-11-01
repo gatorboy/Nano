@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_vertical"
     android:id="@+id/tool_bar"
-    android:layout_height="wrap_content"
+    android:layout_height="?attr/actionBarSize"
     android:layout_width="match_parent"
-    android:minHeight="?attr/actionBarSize"
-    android:theme="@style/AppTheme.AppBar"
-    app:layout_scrollFlags="scroll|enterAlways"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:layout_collapseMode="pin"
+    app:layout_scrollFlags="scroll|enterAlways|snap"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     tools:ignore="UnusedAttribute">
 </android.support.v7.widget.Toolbar>

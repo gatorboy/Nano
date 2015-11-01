@@ -56,6 +56,10 @@ public class MoviesActivity extends AppCompatActivity {
         }
 
         MoviesSyncAdapter.initializeSyncAdapter(this);
+
+        if (!NetworkUtil.isConnected(this)) {
+            NetworkUtil.showNoInternetMessage(this);
+        }
     }
 
     @Override
@@ -126,6 +130,7 @@ public class MoviesActivity extends AppCompatActivity {
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, event.mView, getString(R.string.poster_transition));
             final Intent intent = new Intent(this, MovieDetailActivity.class);
             intent.setData(MovieEntry.buildMovieDetailUri(event.movieId));
+            intent.putExtra(Movie.TITLE_FIELD_NAME, event.movieName);
             startActivity(intent, optionsCompat.toBundle());
         }
     }

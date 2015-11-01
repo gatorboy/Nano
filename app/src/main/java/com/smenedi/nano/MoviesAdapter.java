@@ -88,6 +88,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         @Bind(R.id.poster)
         SimpleDraweeView mPoster;
         Long movieId;
+        String movieName;
         int position;
 
         public MovieViewHolder(View v) {
@@ -103,6 +104,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
             mPoster.setImageURI(posterPath);
             mPoster.setContentDescription(cursor.getString(MoviesFragment.COLUMN_ORIGINAL_TITLE));
             movieId = cursor.getLong(MoviesFragment.COLUMN_ID);
+            movieName = cursor.getString(MoviesFragment.COLUMN_ORIGINAL_TITLE);
             position = pos;
             Log.d("MovieAdapter", movieId + " = " + cursor.getString(MoviesFragment.COLUMN_ORIGINAL_TITLE) + " = " + posterPath.toString());
         }
@@ -110,7 +112,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         @Override
         public void onClick(View v) {
             mSelectedPosition = position;
-            EventBus.getDefault().post(new MovieItemClickEvent(v, movieId, position));
+            EventBus.getDefault().post(new MovieItemClickEvent(v, movieId, movieName, position));
             /*final Intent intent = new Intent(mContext, MovieDetailActivity.class);
             intent.setData(MovieEntry.buildMovieDetailUri(movieId));
             mContext.startActivity(intent);*/

@@ -42,5 +42,6 @@
 
     <!--transitions-->
     <string name="poster_transition">poster</string>
+    <string name="internet_unavailable">You are not connected!</string>
 
 </resources>

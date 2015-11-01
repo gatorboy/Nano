@@ -1,14 +1,16 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/cardview_dark_background"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     tools:context="com.smenedi.nano.MoviesActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <include layout="@layout/app_bar"/>
 
@@ -19,6 +21,9 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:name="com.smenedi.nano.MoviesFragment"
-        tools:layout="@layout/fragment_movies"/>
+        tools:layout="@layout/fragment_movies"
+        app:layout_collapseMode="pin"/>
+
+    <include layout="@layout/snackbar"/>
 
 </android.support.design.widget.CoordinatorLayout>

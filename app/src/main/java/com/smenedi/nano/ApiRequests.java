@@ -12,17 +12,29 @@ public class ApiRequests {
     // Movies Rest API constants
     private static final String MOVIES_API_PATH = "3/discover/movie";
 
-    private static final String IMAGES_API_PATH = "t/p/w185";
+    private static final String IMAGES_API_PATH = "t/p";
+    private static final String IMAGES_WIDTH_185 = "w185";
+    private static final String IMAGES_WIDTH_500 = "w500";
 
     private static final String SORT_BY_QUERY_PARAMETER = "sort_by";
     private static final String API_KEY_QUERY_PARAMETER = "api_key";
     private static final String PAGE_KEY_QUERY_PARAMETER = "page";
 
 
+    public static Uri getBackdropUri(String imagePath) {
+        return getImageUri(imagePath, IMAGES_WIDTH_500);
+
+    }
+
     public static Uri getPosterUri(String imagePath) {
+        return getImageUri(imagePath, IMAGES_WIDTH_185);
+    }
+
+    public static Uri getImageUri(String imagePath, String widthPath) {
         final Uri.Builder builder = new Uri.Builder().scheme(BuildConfig.IMAGE_HOST_SCHEME)
                                                      .authority(BuildConfig.IMAGE_HOST)
                                                      .appendEncodedPath(IMAGES_API_PATH)
+                                                     .appendEncodedPath(widthPath)
                                                      .appendEncodedPath(imagePath);
         return builder.build();
     }
