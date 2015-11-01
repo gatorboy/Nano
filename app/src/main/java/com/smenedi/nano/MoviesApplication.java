@@ -29,7 +29,7 @@ public class MoviesApplication extends Application {
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this).setDownsampleEnabled(true).build();
         Fresco.initialize(this, config);
 
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this);
         }
     }

@@ -76,7 +76,7 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         Bundle bundle = getArguments();
-        if(bundle!=null){
+        if (bundle != null) {
             mMovieDetailUri = bundle.getParcelable(DETAIL_URI);
         }
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
@@ -86,7 +86,7 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_share) {
+        if (item.getItemId() == R.id.action_share) {
             startActivity(Intent.createChooser(createShareForecastIntent(), "Share to"));
             return true;
         }
@@ -117,7 +117,7 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data.moveToFirst()){
+        if (data.moveToFirst()) {
             setViews(data);
         }
     }

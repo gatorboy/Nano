@@ -39,7 +39,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         // We are using the tool bar as a replacement for action, setup it up as such
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
-            if(getSupportActionBar() != null) {
+            if (getSupportActionBar() != null) {
                 getSupportActionBar().setElevation(0f);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
@@ -52,7 +52,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     private void setAnimations() {
-        if(VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             getWindow().setSharedElementEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
         }
     }

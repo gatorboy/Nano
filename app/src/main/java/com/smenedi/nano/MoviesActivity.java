@@ -21,10 +21,10 @@ import android.view.MenuItem;
 public class MoviesActivity extends AppCompatActivity {
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private final String LOG_TAG = MoviesActivity.class.getSimpleName();
+    Toolbar mToolbar;
     private boolean mTwoPane;
     private String mSortOrder;
 
-    Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "onCreate");
@@ -134,7 +134,7 @@ public class MoviesActivity extends AppCompatActivity {
     }
 
     private void setAnimations() {
-        if(VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             getWindow().setSharedElementExitTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
         }
     }

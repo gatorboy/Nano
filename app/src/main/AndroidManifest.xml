@@ -42,7 +42,8 @@
         <activity
             android:label="@string/title_activity_settings"
             android:name=".SettingsActivity"
-            android:parentActivityName=".MoviesActivity">
+            android:parentActivityName=".MoviesActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.smenedi.nano.MoviesActivity"/>

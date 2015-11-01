@@ -23,11 +23,8 @@ import android.view.ViewGroup;
  * Created by smenedi on 9/12/15.
  */
 public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
-    public static final String KEY_MOVIE = "com.smenedi.nano.movie";
-    private static final String LOG_TAG = MoviesAdapter.class.getSimpleName();
     public static final int RESET_COUNT = -1;
-
-    Context mContext;
+    private Context mContext;
     private Cursor mCursor;
     private int mSelectedPosition = RecyclerView.NO_POSITION;
 
@@ -58,14 +55,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     public void swapCursor(int oldCount, Cursor newCursor) {
         mCursor = newCursor;
-        if(oldCount == RESET_COUNT) {
+        if (oldCount == RESET_COUNT) {
             notifyDataSetChanged();
             return;
         }
         int newCount = newCursor.getCount();
-        if (newCount > oldCount ) {
+        if (newCount > oldCount) {
             notifyItemRangeInserted(oldCount, newCount - oldCount);
-        } else if (newCount <= oldCount ) {
+        } else if (newCount <= oldCount) {
             notifyDataSetChanged();
         }
     }
@@ -73,6 +70,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     public int getSelectedPosition() {
         return mSelectedPosition;
     }
+
     public Cursor getCursor() {
         return mCursor;
     }
@@ -113,7 +111,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
             EventBus.getDefault().post(new MovieItemClickEvent(v, movieId, movieName, position));
         }
     }
-
 
 
 }
