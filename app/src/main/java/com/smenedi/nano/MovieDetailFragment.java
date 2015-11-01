@@ -20,10 +20,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,22 +52,17 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     static final int COLUMN_RATING = 3;
     static final int COLUMN_OVERVIEW = 4;
     static final int COLUMN_BACKDROP_PATH = 5;
+
     private static final String DATE_FORMAT = "yyyy-mm-dd";
     public static final String DETAIL_URI = "URI";
 
     private String mShareMovieDetails;
     private Uri mMovieDetailUri;
-//    private ShareActionProvider mShareActionProvider;
 
-    //views
-//    @Bind(R.id.title)
-    TextView mTitle;
     @Bind(R.id.poster)
     SimpleDraweeView mPoster;
     @Bind(R.id.release_year)
     TextView mYearOfRelease;
-    @Bind(R.id.duration)
-    TextView mDuration;
     @Bind(R.id.rating)
     TextView mRating;
     @Bind(R.id.overview)
@@ -88,26 +82,6 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, view);
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.moviedetailfragment, menu);
-
-        // Retrieve the share menu item
-        MenuItem menuItem = menu.findItem(R.id.action_share);
-
-        /*// Get the provider and hold onto it to set/change the share intent.
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-
-        // Attach an intent to this ShareActionProvider.  You can update this at any time,
-        // like when the user selects a new piece of data they might like to share.
-        if (mShareActionProvider != null ) {
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
-        } else {
-            Log.d(LOG_TAG, "Share Action Provider is null?");
-        }*/
     }
 
     @Override
@@ -145,22 +119,18 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(data.moveToFirst()){
             setViews(data);
-
-            /*// If onCreateOptionsMenu has already happened, we need to update the share intent now.
-            if (mShareActionProvider != null) {
-                mShareActionProvider.setShareIntent(createShareForecastIntent());
-            }*/
         }
-
     }
 
     private void setViews(Cursor cursor) {
-        mShareMovieDetails = cursor.getString(COLUMN_POSTER_PATH);
-//        mTitle.setText(cursor.getString(COLUMN_ORIGINAL_TITLE));
+        mShareMovieDetails = "Movie: " + cursor.getString(COLUMN_ORIGINAL_TITLE) + " Overview: " + cursor.getString(COLUMN_OVERVIEW);
         mPoster.setImageURI(ApiRequests.getPosterUri(cursor.getString(COLUMN_POSTER_PATH)));
         mYearOfRelease.setText(String.valueOf(getYearOfRelease(cursor.getString(COLUMN_RELEASE_DATE))));
         mRating.setText(getActivity().getString(R.string.format_rating, cursor.getDouble(COLUMN_RATING)));
-        mOverview.setText(cursor.getString(COLUMN_OVERVIEW));
+        final String overview = cursor.getString(COLUMN_OVERVIEW);
+        if (!TextUtils.isEmpty(overview)) {
+            mOverview.setText(overview);
+        }
 
         if (getActivity().findViewById(R.id.backdrop) != null) {
             ((SimpleDraweeView) getActivity().findViewById(R.id.backdrop)).setImageURI(ApiRequests.getBackdropUri(cursor.getString(COLUMN_BACKDROP_PATH)));

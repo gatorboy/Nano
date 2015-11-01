@@ -98,8 +98,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         }
 
         public void bind(Cursor cursor, int pos) {
-//            Movie movie = convertContentValuesToUXFormat(cursor);
-//            mPoster.setImageURI(movie.getPosterPathUri());
             final Uri posterPath = Movie.getPosterPathUri(cursor.getString(MoviesFragment.COLUMN_POSTER_PATH));
             mPoster.setImageURI(posterPath);
             mPoster.setContentDescription(cursor.getString(MoviesFragment.COLUMN_ORIGINAL_TITLE));
@@ -113,9 +111,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         public void onClick(View v) {
             mSelectedPosition = position;
             EventBus.getDefault().post(new MovieItemClickEvent(v, movieId, movieName, position));
-            /*final Intent intent = new Intent(mContext, MovieDetailActivity.class);
-            intent.setData(MovieEntry.buildMovieDetailUri(movieId));
-            mContext.startActivity(intent);*/
         }
     }
 

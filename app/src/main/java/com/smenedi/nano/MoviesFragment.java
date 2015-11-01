@@ -162,13 +162,13 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
         if (data != null) {
             mMoviesAdapter.swapCursor(mMoviesAdapter.getItemCount(), data);
         }
-        //scroll to last scrolled position
+        /*//scroll to last scrolled position
         if(mRecyclerView!= null) {
 //            mRecyclerView.scrollToPosition(currentPosition);
         }
         if (mSelectedPosition != RecyclerView.NO_POSITION) {
 //            mRecyclerView.smoothScrollToPosition(mSelectedPosition);
-        }
+        }*/
     }
 
     @Override

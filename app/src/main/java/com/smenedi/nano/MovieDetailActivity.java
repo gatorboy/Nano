@@ -48,6 +48,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(getIntent().getStringExtra(Movie.TITLE_FIELD_NAME));
+//        collapsingToolbar.setExpandedTitleTextAppearance(Te);
     }
 
     private void setAnimations() {

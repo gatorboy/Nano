@@ -238,24 +238,5 @@ public class MoviesSyncAdapter extends AbstractThreadedSyncAdapter {
             inserted = getContext().getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
         }
         Log.d(LOG_TAG, "Movies fetching Complete. " + inserted + " Inserted");
-
- /*       // Sort order:  Ascending, by date.
-        String movieSortOrder;
-        if(sortOrder.equals("popularity.desc")) {
-            movieSortOrder = MovieEntry.COLUMN_POPULARITY + " DESC";
-        } else {
-            movieSortOrder = MovieEntry.COLUMN_RATING + " DESC";
-        }
-        Uri movieListUri = MovieEntry.buildMovieListUri();
-        Cursor cur = mContext.getContentResolver().query(movieListUri, null, null, null, movieSortOrder);
-        contentValuesArrayList = new Vector<>(cur.getCount());
-        if ( cur.moveToFirst() ) {
-            do {
-                ContentValues cv = new ContentValues();
-                DatabaseUtils.cursorRowToContentValues(cur, cv);
-                contentValuesArrayList.add(cv);
-            } while (cur.moveToNext());
-        }
-        return convertContentValuesToUXFormat(contentValuesArrayList);*/
     }
 }

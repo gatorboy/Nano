@@ -125,8 +125,6 @@ public class MoviesActivity extends AppCompatActivity {
                                        .replace(R.id.movie_detail_container, movieDetailFragment, DETAILFRAGMENT_TAG)
                                        .commit();
         } else {
-//            View v = getFragmentManager().findFragmentById(R.id.fragment_movies).getfindViewById(R.id.poster);
-//            Log.d(LOG_TAG, "view found :"+ (v==null));
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, event.mView, getString(R.string.poster_transition));
             final Intent intent = new Intent(this, MovieDetailActivity.class);
             intent.setData(MovieEntry.buildMovieDetailUri(event.movieId));
