@@ -156,7 +156,6 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     }
 
     private void setViews(Cursor cursor) {
-        mShareMovieDetails = "Movie: " + cursor.getString(COLUMN_ORIGINAL_TITLE) + " Overview: " + cursor.getString(COLUMN_OVERVIEW);
         mPoster.setImageURI(ApiRequests.getPosterUri(cursor.getString(COLUMN_POSTER_PATH)));
         mYearOfRelease.setText(String.valueOf(getYearOfRelease(cursor.getString(COLUMN_RELEASE_DATE))));
         mRating.setText(getActivity().getString(R.string.format_rating, cursor.getDouble(COLUMN_RATING)));
@@ -200,12 +199,14 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
                                 Log.e(LOG_TAG, "Unexpected code " + response);
                             } else {
                                 final String responseBody = response.body().string();
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        saveMovieDetails(responseBody);
-                                    }
-                                });
+                                if(getActivity()!= null) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            saveMovieDetails(responseBody);
+                                        }
+                                    });
+                                }
                             }
                         }
                     });
@@ -270,9 +271,15 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
             return;
         }
         mTrailersLayout.removeAllViews();
+
+
         for (int i = 0; i < trailers.length(); i++) {
+
             final JSONObject trailerJsonObject = trailers.optJSONObject(i);
             final Trailer trailer = new Trailer(getActivity(), trailerJsonObject);
+            if(i==0) {
+                mShareMovieDetails = trailer.getVideoUri().toString();
+            }
             mTrailersLayout.addView(trailer.getView(mTrailersLayout));
         }
     }
@@ -321,6 +328,8 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
         getActivity().getContentResolver()
                      .update(MovieContract.MovieEntry.buildMovieListUri(), movieValues, MovieProvider.sMovieSelection, new String[] { mMovieDetailUri.getLastPathSegment() });
     }
+
+
 
 
 }

@@ -71,6 +71,10 @@ public class Trailer {
         return Uri.parse(String.format(THUMBNAIL, getId()));
     }
 
+    public Uri getVideoUri() {
+        return Uri.parse(String.format(VIDEO_URL, getId()));
+    }
+
     public View getView(final LinearLayout parentView) {
         if(getThumbnailUrl() != null) {
             final View trailer = mParentActivity.getLayoutInflater().inflate(R.layout.item_trailer, parentView, false);
@@ -80,12 +84,12 @@ public class Trailer {
             mPlay.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent youTubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(VIDEO_URL, getId())));
+                    Intent youTubeIntent = new Intent(Intent.ACTION_VIEW, getVideoUri());
                     youTubeIntent.putExtra("force_fullscreen", true);
                     if(youTubeIntent.resolveActivity(MoviesApplication.getInstance().getPackageManager()) != null) {
                         mParentActivity.startActivity(youTubeIntent);
                     } else {
-                        Utility.showSnackbar(mParentActivity,mParentActivity.getString(R.string.no_youtube));
+                        Utility.showSnackbar(mParentActivity, mParentActivity.getString(R.string.no_youtube));
                     }
                 }
             });
