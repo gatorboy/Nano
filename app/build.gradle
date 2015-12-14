@@ -41,6 +41,7 @@ dependencies {
     compile 'com.facebook.fresco:fresco:0.7.0' //for image caching and loading
     compile 'de.greenrobot:eventbus:2.4.0' // Event bus library for decoupling components
 
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
 
     debugCompile 'com.facebook.stetho:stetho:1.2.0'
 

@@ -55,16 +55,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     public void swapCursor(int oldCount, Cursor newCursor) {
         mCursor = newCursor;
-        if (oldCount == RESET_COUNT) {
-            notifyDataSetChanged();
-            return;
-        }
-        int newCount = newCursor.getCount();
-        if (newCount > oldCount) {
-            notifyItemRangeInserted(oldCount, newCount - oldCount);
-        } else if (newCount <= oldCount) {
-            notifyDataSetChanged();
-        }
+        notifyDataSetChanged();
     }
 
     public int getSelectedPosition() {

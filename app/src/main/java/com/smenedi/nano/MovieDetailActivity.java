@@ -1,10 +1,16 @@
 package com.smenedi.nano;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
@@ -15,12 +21,15 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     Toolbar mToolbar;
 
+    @Bind(R.id.favorite)
+    FloatingActionButton mFavorite;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-
-        setAnimations();
+        ButterKnife.bind(this);
+//        setAnimations();
 
         if (savedInstanceState == null) {
             //if the details are displayed in a separate activity
@@ -48,7 +57,16 @@ public class MovieDetailActivity extends AppCompatActivity {
         CollapsingToolbarLayout collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(getIntent().getStringExtra(Movie.TITLE_FIELD_NAME));
-//        collapsingToolbar.setExpandedTitleTextAppearance(Te);
+    }
+
+    public void setFavoriteButton(boolean isFavorite) {
+//        mFavorite.setBackgroundDrawable(isFavorite? getResources().getDrawable(android.R.drawable.star_big_on):getResources().getDrawable(android.R.drawable.star_big_off));
+//        mFavorite.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        if(isFavorite) {
+            mFavorite.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        } else {
+            mFavorite.setImageTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.white)));
+        }
     }
 
     private void setAnimations() {
@@ -60,7 +78,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.moviesactivity, menu);
+        getMenuInflater().inflate(R.menu.moviesdetailactivity, menu);
         return true;
     }
 
@@ -83,4 +101,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @OnClick(R.id.favorite)
+    public void onFavorite() {
+        MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getSupportFragmentManager().findFragmentById(R.id.movie_detail_container);
+        movieDetailFragment.onFavorite(!movieDetailFragment.isFavorite);
+    }
 }

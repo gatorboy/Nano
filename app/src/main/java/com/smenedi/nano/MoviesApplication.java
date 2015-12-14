@@ -10,6 +10,7 @@ import android.app.Application;
  * Created by smenedi on 9/12/15.
  */
 public class MoviesApplication extends Application {
+    public static final String APP_SHARED_PREFERENCES_NAME = "Movies";
 
     private static MoviesApplication INSTANCE;
 

@@ -7,6 +7,8 @@ import com.smenedi.nano.sync.MoviesSyncAdapter;
 import de.greenrobot.event.EventBus;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -25,6 +27,9 @@ public class MoviesActivity extends AppCompatActivity {
     private boolean mTwoPane;
     private String mSortOrder;
 
+
+    MenuItem mFavoriteMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "onCreate");
@@ -37,7 +42,7 @@ public class MoviesActivity extends AppCompatActivity {
             setSupportActionBar(mToolbar);
         }
 
-        setAnimations();
+//        setAnimations();
 
         mSortOrder = Utility.getSortOrder(this);
         if (findViewById(R.id.movie_detail_container) != null) {
@@ -93,8 +98,10 @@ public class MoviesActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.moviesactivity, menu);
+        mFavoriteMenu = menu.findItem(R.id.show_favorites);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -107,6 +114,13 @@ public class MoviesActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        } else if (id == R.id.show_favorites) {
+            MoviesFragment ff = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_movies);
+            boolean isFavorites = Utility.isFavorites(this);
+            if (null != ff) {
+                mFavoriteMenu.getIcon().setColorFilter(!isFavorites ? Color.RED : Color.WHITE, Mode.SRC_ATOP);
+                ff.onFavorites(Utility.setFavorites(this, !isFavorites));
+            }
         }
 
         return super.onOptionsItemSelected(item);

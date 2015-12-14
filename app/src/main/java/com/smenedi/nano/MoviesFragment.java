@@ -18,11 +18,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,10 +28,12 @@ import android.view.ViewGroup;
  * A placeholder fragment containing a simple view.
  */
 public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> {
-
-
     private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
     private static final int MOVIE_LOADER = R.id.movie_loader_id;
+
+    static final int COLUMN_ID = 0;
+    static final int COLUMN_POSTER_PATH = 1;
+    static final int COLUMN_ORIGINAL_TITLE = 2;
 
     //Projection
     private static final String[] MOVIE_LIST_PROJECTION = {
@@ -42,22 +41,15 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
             MovieEntry.COLUMN_POSTER_PATH,
             MovieEntry.COLUMN_ORIGINAL_TITLE
     };
-
-    static final int COLUMN_ID = 0;
-    static final int COLUMN_POSTER_PATH = 1;
-    static final int COLUMN_ORIGINAL_TITLE = 2;
-
-
     private static final String SELECTED_KEY = "selected_position";
+    private static final int THRESHOLD_ITEM_COUNT = 5;
 
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
     MoviesAdapter mMoviesAdapter;
-
     private int mSelectedPosition;
     private boolean isListLoading = true;
     private int lastLoadedItemCount = 0;
-    private static final int THRESHOLD_ITEM_COUNT = 5;
 
     public MoviesFragment() {
     }
@@ -71,11 +63,6 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
         updateMovies();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.moviesfragment, menu);
-    }
-
     void onSortChanged() {
         Log.d(LOG_TAG, "Sort Changed. Update Movies");
         //Clear DB
@@ -86,6 +73,7 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
         lastLoadedItemCount = 0;
 //        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
+
     private void updateMovies() {
 //        MovieService.startActionUpdateMovies(getActivity(), getSortOrder());
         MoviesSyncAdapter.syncImmediately(getActivity());
@@ -101,9 +89,9 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
             Bundle savedInstanceState) {
         final View layout = inflater.inflate(R.layout.fragment_movies, container, false);
         ButterKnife.bind(this, layout);
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+        /*if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mSelectedPosition = savedInstanceState.getInt(SELECTED_KEY);
-        }
+        }*/
         setUpRecylerView();
         return layout;
     }
@@ -116,7 +104,7 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
 
         mMoviesAdapter = new MoviesAdapter(getContext());
         mRecyclerView.setAdapter(mMoviesAdapter);
-        mRecyclerView.addOnScrollListener(new OnScrollListener() {
+        /*mRecyclerView.addOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 final int totalItemCount = gridLayoutManager.getItemCount();
@@ -133,7 +121,7 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
                     loadMorePages(++lastLoadedPageNumber);
                 }
             }
-        });
+        });*/
     }
 
     private void loadMorePages(int page) {
@@ -151,8 +139,16 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri movieListUri = MovieEntry.buildMovieListUri();
-//        return new CursorLoader(getActivity(), movieListUri, MOVIE_LIST_PROJECTION, null, null, Utility.getSqlSortOrder(getActivity()));
-        return new CursorLoader(getActivity(), movieListUri, MOVIE_LIST_PROJECTION, null, null, null);
+        String selection;
+        switch (id) {
+        case 1:
+            selection = MovieEntry.COLUMN_FAVORITE + " = '1'";
+            break;
+        default:
+            selection = null;
+            break;
+        }
+        return new CursorLoader(getActivity(), movieListUri, MOVIE_LIST_PROJECTION, selection, null, null);
     }
 
 
@@ -176,7 +172,13 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
         mMoviesAdapter.swapCursor(MoviesAdapter.RESET_COUNT, null);
     }
 
-    @Override
+    public void onFavorites(boolean isFavorites) {
+        if (getLoaderManager() != null) {
+            getLoaderManager().restartLoader(isFavorites ? 1 : 0, null, this);
+        }
+    }
+
+    /*@Override
     public void onSaveInstanceState(Bundle outState) {
         int position = (mMoviesAdapter != null) ? mMoviesAdapter.getSelectedPosition() : RecyclerView.NO_POSITION;
         //Save scrolling position
@@ -184,5 +186,5 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
             outState.putInt(SELECTED_KEY, position);
         }
         super.onSaveInstanceState(outState);
-    }
+    }*/
 }

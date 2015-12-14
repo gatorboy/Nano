@@ -1,4 +1,5 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                                            xmlns:app="http://schemas.android.com/apk/res-auto"
                                             xmlns:fresco="http://schemas.android.com/apk/res-auto"
                                             xmlns:tools="http://schemas.android.com/tools"
                                             android:layout_height="match_parent"
@@ -22,7 +23,6 @@
                 android:id="@+id/poster"
                 android:layout_height="@dimen/poster_height"
                 android:layout_width="@dimen/poster_width"
-                android:transitionName="@string/poster_transition"
                 fresco:placeholderImageScaleType="fitXY"/>
 
             <LinearLayout
@@ -45,10 +45,116 @@
             </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            style="@style/detail_margins"
-            android:id="@+id/overview"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"/>
+        <android.support.v7.widget.CardView
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:selectableItemBackground"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            app:cardCornerRadius="4dp">
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/movie_detail_padding_top">
+
+                <TextView
+                    style="@style/detail_margins"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="@string/overview"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                    android:textSize="24sp"/>
+
+                <TextView
+                    style="@style/detail_margins"
+                    android:id="@+id/overview"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:selectableItemBackground"
+            android:id="@+id/trailers_card"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            app:cardCornerRadius="4dp">
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/movie_detail_padding_top">
+
+                <TextView
+                    style="@style/detail_margins"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="@string/trailers"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                    android:textSize="24sp"/>
+
+                <HorizontalScrollView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
+
+                    <LinearLayout
+                        android:gravity="center"
+                        android:id="@+id/trailersLayout"
+                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:orientation="horizontal">
+
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:selectableItemBackground"
+            android:id="@+id/reviews_card"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            app:cardCornerRadius="4dp">
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/movie_detail_padding_top">
+
+                <TextView
+                    style="@style/detail_margins"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="@string/reviews"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                    android:textSize="24sp"/>
+
+                <LinearLayout
+                    android:id="@+id/reviewsLayout"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
     </LinearLayout>
+
 </android.support.v4.widget.NestedScrollView>

@@ -19,4 +19,16 @@ public class Utility {
         return PreferenceManager.getDefaultSharedPreferences(context)
                                 .getInt(context.getString(R.string.key_pref_page_number), 1);
     }
+
+    public static boolean isFavorites(Context context) {
+        return context.getSharedPreferences(MoviesApplication.APP_SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+                                .getBoolean(context.getString(R.string.key_pref_is_favorites), false);
+    }
+
+    public static boolean setFavorites(Context context, boolean isFavorites) {
+        context.getSharedPreferences(MoviesApplication.APP_SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit()
+                      .putBoolean(context.getString(R.string.key_pref_is_favorites), isFavorites).apply();
+        return isFavorites;
+    }
+
 }

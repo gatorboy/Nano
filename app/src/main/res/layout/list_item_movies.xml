@@ -14,8 +14,7 @@
         android:id="@+id/poster"
         android:layout_height="@dimen/poster_height"
         android:layout_width="match_parent"
-        fresco:placeholderImageScaleType="fitXY"
-        android:transitionName="@string/poster_transition"/>
+        fresco:placeholderImageScaleType="fitXY"/>
 
 </android.support.v7.widget.CardView>
 

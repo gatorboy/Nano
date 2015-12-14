@@ -1,5 +1,6 @@
 package com.smenedi.nano.data;
 
+import com.smenedi.nano.data.MovieContract.MovieDetailEntry;
 import com.smenedi.nano.data.MovieContract.MovieEntry;
 
 import android.content.ContentProvider;
@@ -18,12 +19,21 @@ public class MovieProvider extends ContentProvider {
     static final int MOVIE_LIST = 1;
     static final int MOVIE_DETAIL = 2;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
-    private static final String sMovieSelection = MovieContract.MovieEntry.TABLE_NAME + "." + MovieEntry.COLUMN_MOVIE_ID + " = ?";
+    public static final String sMovieSelection = MovieContract.MovieEntry.TABLE_NAME + "." + MovieEntry.COLUMN_MOVIE_ID + " = ?";
     private static final SQLiteQueryBuilder sQueryBuilder;
 
     static {
         sQueryBuilder = new SQLiteQueryBuilder();
         sQueryBuilder.setTables(MovieContract.MovieEntry.TABLE_NAME);
+
+        sQueryBuilder.setTables(
+                MovieEntry.TABLE_NAME + " LEFT JOIN " +
+                MovieDetailEntry.TABLE_NAME +
+                " ON " + MovieEntry.TABLE_NAME +
+                "." + MovieEntry.COLUMN_MOVIE_ID +
+                " = " + MovieDetailEntry.TABLE_NAME +
+                "." + MovieDetailEntry.COLUMN_MOVIE_ID);
+
     }
 
     private MovieDbHelper mOpenHelper;
@@ -39,8 +49,8 @@ public class MovieProvider extends ContentProvider {
         return matcher;
     }
 
-    private Cursor queryMovieList(Uri uri, String[] projection, String sortOrder) {
-        return mOpenHelper.getReadableDatabase().query(MovieEntry.TABLE_NAME, projection, null, null, null, null, sortOrder);
+    private Cursor queryMovieList(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        return mOpenHelper.getReadableDatabase().query(MovieEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
     }
 
 
@@ -55,10 +65,10 @@ public class MovieProvider extends ContentProvider {
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
         case MOVIE_LIST:
-            retCursor = queryMovieList(uri, projection, sortOrder);
+            retCursor = queryMovieList(uri, projection, selection, selectionArgs, sortOrder);
             break;
         case MOVIE_DETAIL:
-            retCursor = queryMovieDetail(uri, projection, sortOrder);
+            retCursor = queryMovieDetail(uri, projection);
             break;
 
         default:
@@ -69,9 +79,10 @@ public class MovieProvider extends ContentProvider {
 
     }
 
-    private Cursor queryMovieDetail(Uri uri, String[] projection, String sortOrder) {
+    private Cursor queryMovieDetail(Uri uri, String[] projection) {
 //        return sQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, sMovieSelection, new String[] { uri.getLastPathSegment() }, null, null, sortOrder);
-        return mOpenHelper.getReadableDatabase().query(MovieEntry.TABLE_NAME, projection, sMovieSelection, new String[] { uri.getLastPathSegment() }, null, null, sortOrder);
+//        return mOpenHelper.getReadableDatabase().query(MovieEntry.TABLE_NAME, projection, sMovieSelection, new String[] { uri.getLastPathSegment() }, null, null, sortOrder);
+        return sQueryBuilder.query(mOpenHelper.getReadableDatabase(), projection, sMovieSelection, new String[] { uri.getLastPathSegment() }, null, null, null);
     }
 
     @Override
@@ -96,6 +107,15 @@ public class MovieProvider extends ContentProvider {
         switch (match) {
         case MOVIE_LIST: {
             long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
+            if (_id > 0) {
+                returnUri = MovieContract.MovieEntry.buildMovieListUri();
+            } else {
+                throw new android.database.SQLException("Failed to insert row into " + uri);
+            }
+            break;
+        }
+        case MOVIE_DETAIL: {
+            long _id = db.insert(MovieContract.MovieDetailEntry.TABLE_NAME, null, values);
             if (_id > 0) {
                 returnUri = MovieContract.MovieEntry.buildMovieDetailUri(_id);
             } else {
@@ -124,6 +144,10 @@ public class MovieProvider extends ContentProvider {
             rowsDeleted = db.delete(
                     MovieContract.MovieEntry.TABLE_NAME, selection, selectionArgs);
             break;
+        case MOVIE_DETAIL:
+            rowsDeleted = db.delete(
+                    MovieContract.MovieDetailEntry.TABLE_NAME, selection, selectionArgs);
+            break;
         default:
             throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -143,6 +167,9 @@ public class MovieProvider extends ContentProvider {
         switch (match) {
         case MOVIE_LIST:
             rowsUpdated = db.update(MovieContract.MovieEntry.TABLE_NAME, values, selection, selectionArgs);
+            break;
+        case MOVIE_DETAIL:
+            rowsUpdated = db.update(MovieContract.MovieDetailEntry.TABLE_NAME, values, selection, selectionArgs);
             break;
         default:
             throw new UnsupportedOperationException("Unknown uri: " + uri);

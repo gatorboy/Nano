@@ -30,6 +30,7 @@
     <string name="key_pref_sort_order" translatable="false">sortOrder</string>
     <string name="value_pref_sort_order_default">@string/value_sortby_popularity</string>
     <string name="key_pref_page_number">lastAccessedPageNumber</string>
+    <string name="key_pref_is_favorites">isfavorties</string>
     <string name="action_share">Share</string>
 
 
@@ -43,5 +44,9 @@
     <!--transitions-->
     <string name="poster_transition">poster</string>
     <string name="internet_unavailable">You are not connected!</string>
+    <string name="overview">Overview</string>
+    <string name="reviews">Reviews</string>
+    <string name="trailers">Trailers</string>
+    <string name="favorites">Favorites</string>
 
 </resources>

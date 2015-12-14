@@ -47,12 +47,14 @@
         tools:context="com.smenedi.nano.MovieDetailActivity"
         tools:ignore="MergeRootFrame"/>
 
-<!--    <android.support.design.widget.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:clickable="true"
+        android:id="@+id/favorite"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:layout_width="wrap_content"
-        android:src="@android:drawable/arrow_down_float"
+        android:src="@drawable/ic_favorite_white_24dp"
+        app:backgroundTint="@color/primaryColor"
         app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|right|end"/>-->
+        app:layout_anchorGravity="bottom|right|end"/>
 </android.support.design.widget.CoordinatorLayout>
