@@ -53,8 +53,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:layout_width="wrap_content"
-        android:src="@drawable/ic_favorite_white_24dp"
+        android:src="@drawable/favorite"
         app:backgroundTint="@color/primaryColor"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"/>
+
+    <include layout="@layout/snackbar"/>
+
 </android.support.design.widget.CoordinatorLayout>

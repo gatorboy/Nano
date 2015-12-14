@@ -54,7 +54,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
                                                      // To assure the application have just one weather entry per day
                                                      // per location, it's created a UNIQUE constraint with REPLACE strategy
-                                                     " UNIQUE (" + MovieDetailEntry.COLUMN_MOVIE_ID + ") ON CONFLICT IGNORE);";
+                                                     " UNIQUE (" + MovieDetailEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_DETAIL_TABLE);

@@ -55,6 +55,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     public void swapCursor(int oldCount, Cursor newCursor) {
         mCursor = newCursor;
+        if(mCursor != null) {
+            mCursor.moveToFirst();
+        }
+
         notifyDataSetChanged();
     }
 

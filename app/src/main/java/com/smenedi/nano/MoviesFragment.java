@@ -20,7 +20,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,7 +28,7 @@ import android.view.ViewGroup;
  */
 public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = MoviesFragment.class.getSimpleName();
-    private static final int MOVIE_LOADER = R.id.movie_loader_id;
+//    private static final int MOVIE_LOADER = R.id.movie_loader_id;
 
     static final int COLUMN_ID = 0;
     static final int COLUMN_POSTER_PATH = 1;
@@ -66,7 +65,7 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     void onSortChanged() {
         Log.d(LOG_TAG, "Sort Changed. Update Movies");
         //Clear DB
-        getActivity().getContentResolver().delete(MovieContract.MovieEntry.buildMovieListUri(), null, null);
+        getActivity().getContentResolver().delete(MovieContract.MovieEntry.buildMovieListUri(), MovieEntry.COLUMN_FAVORITE + "= 0", null);
         //set page to 1
         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putInt(getString(R.string.key_pref_page_number), 1).apply();
         MovieService.startActionUpdateMovies(getActivity(), Utility.getSortOrder(getActivity()), 1);
@@ -75,18 +74,15 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
     }
 
     private void updateMovies() {
+        Log.d(LOG_TAG, "updateMovies");
 //        MovieService.startActionUpdateMovies(getActivity(), getSortOrder());
         MoviesSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreateView");
         final View layout = inflater.inflate(R.layout.fragment_movies, container, false);
         ButterKnife.bind(this, layout);
         /*if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
@@ -132,12 +128,21 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+
+        Log.d(LOG_TAG, "onActivityCreated");
+        queryProvider();
+    }
+
+    private int getLoaderId() {
+        Log.d(LOG_TAG, "getLoaderId: " + (Utility.isFavorites(getActivity()) ? 1 : 0));
+        return Utility.isFavorites(getActivity()) ? 1 : 0;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.d(LOG_TAG, "onCreateLoader");
+
         Uri movieListUri = MovieEntry.buildMovieListUri();
         String selection;
         switch (id) {
@@ -148,7 +153,7 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
             selection = null;
             break;
         }
-        return new CursorLoader(getActivity(), movieListUri, MOVIE_LIST_PROJECTION, selection, null, null);
+        return new CursorLoader(getActivity(), movieListUri, MOVIE_LIST_PROJECTION, selection, null, Utility.getSqlSortOrder(getActivity()));
     }
 
 
@@ -169,12 +174,37 @@ public class MoviesFragment extends Fragment implements LoaderCallbacks<Cursor> 
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.d(LOG_TAG, "onLoaderReset");
         mMoviesAdapter.swapCursor(MoviesAdapter.RESET_COUNT, null);
     }
 
     public void onFavorites(boolean isFavorites) {
-        if (getLoaderManager() != null) {
-            getLoaderManager().restartLoader(isFavorites ? 1 : 0, null, this);
+        Log.d(LOG_TAG, "onFavorites");
+
+        final int loaderId = isFavorites ? 1 : 0;
+        if (getLoaderManager().getLoader(loaderId) == null) {
+            // first time, so call init loader
+            getLoaderManager().initLoader(loaderId, null, this);
+        } else {
+            // if we already had a loader, then we call restart to forget the old data.
+            getLoaderManager().restartLoader(loaderId, null, this);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        queryProvider();
+    }
+
+    public void queryProvider() {
+        final int loaderId = getLoaderId();
+        if (getLoaderManager().getLoader(loaderId) == null) {
+            // first time, so call init loader
+            getLoaderManager().initLoader(loaderId, null, this);
+        } else {
+            // if we already had a loader, then we call restart to forget the old data.
+            getLoaderManager().restartLoader(loaderId, null, this);
         }
     }
 

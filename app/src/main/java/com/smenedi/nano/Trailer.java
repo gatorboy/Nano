@@ -82,7 +82,11 @@ public class Trailer {
                 public void onClick(View v) {
                     Intent youTubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(VIDEO_URL, getId())));
                     youTubeIntent.putExtra("force_fullscreen", true);
-                    mParentActivity.startActivity(youTubeIntent);
+                    if(youTubeIntent.resolveActivity(MoviesApplication.getInstance().getPackageManager()) != null) {
+                        mParentActivity.startActivity(youTubeIntent);
+                    } else {
+                        Utility.showSnackbar(mParentActivity,mParentActivity.getString(R.string.no_youtube));
+                    }
                 }
             });
             return trailer;

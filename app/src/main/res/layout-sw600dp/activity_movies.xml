@@ -2,6 +2,7 @@
 
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:divider="?android:attr/dividerHorizontal"
     android:fitsSystemWindows="true"
@@ -10,9 +11,9 @@
     tools:context="com.smenedi.nano.MoviesActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:fitsSystemWindows="true"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <include layout="@layout/app_bar"/>
@@ -35,6 +36,7 @@
             android:layout_weight="3"
             android:layout_width="0dp"
             android:name="com.smenedi.nano.MoviesFragment"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:layout="@layout/fragment_movies"/>
 
         <FrameLayout
@@ -43,5 +45,17 @@
             android:layout_weight="2"
             android:layout_width="0dp"/>
     </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:clickable="true"
+        android:id="@+id/favorite"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_width="wrap_content"
+        android:src="@drawable/favorite"
+        app:backgroundTint="@color/primaryColor"
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="bottom|right|end"/>
+
     <include layout="@layout/snackbar"/>
 </android.support.design.widget.CoordinatorLayout>

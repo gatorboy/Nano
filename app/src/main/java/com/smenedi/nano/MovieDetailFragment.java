@@ -168,7 +168,10 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
         //Set Fav button
         int favorite = cursor.getInt(COLUMN_FAVORITE);
         isFavorite = favorite == 1;
-        ((MovieDetailActivity) getActivity()).setFavoriteButton(favorite == 1);
+
+        if(getActivity() instanceof MovieDetailActivity) {
+            ((MovieDetailActivity) getActivity()).setFavoriteButton(isFavorite);
+        }
         //get trailers and reviews
         String trailers = cursor.getString(COLUMN_TRAILERS);
         String reviews = cursor.getString(COLUMN_REVIEWS);
@@ -264,7 +267,9 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
         Log.d(LOG_TAG, "No. of trailers=" + trailers.length());
         if (trailers.length() == 0) {
             mTrailersCard.setVisibility(View.GONE);
+            return;
         }
+        mTrailersLayout.removeAllViews();
         for (int i = 0; i < trailers.length(); i++) {
             final JSONObject trailerJsonObject = trailers.optJSONObject(i);
             final Trailer trailer = new Trailer(getActivity(), trailerJsonObject);
@@ -276,7 +281,9 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
         Log.d(LOG_TAG, "No. of reviews=" + reviews.length());
         if (reviews.length() == 0) {
             mReviewsCard.setVisibility(View.GONE);
+            return;
         }
+        mReviewsLayout.removeAllViews();
         for (int i = 0; i < reviews.length(); i++) {
             final JSONObject reviewsJsonObject = reviews.optJSONObject(i);
             final Review review = new Review(getActivity(), reviewsJsonObject);

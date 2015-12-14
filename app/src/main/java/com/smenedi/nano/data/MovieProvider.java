@@ -116,17 +116,13 @@ public class MovieProvider extends ContentProvider {
         }
         case MOVIE_DETAIL: {
             long _id = db.insert(MovieContract.MovieDetailEntry.TABLE_NAME, null, values);
-            if (_id > 0) {
-                returnUri = MovieContract.MovieEntry.buildMovieDetailUri(_id);
-            } else {
-                throw new android.database.SQLException("Failed to insert row into " + uri);
-            }
+            returnUri = MovieContract.MovieEntry.buildMovieDetailUri(_id);
             break;
         }
         default:
             throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+//        getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
     }
 
@@ -153,7 +149,7 @@ public class MovieProvider extends ContentProvider {
         }
         // Because a null deletes all rows
         if (rowsDeleted != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+//            getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsDeleted;
     }
@@ -175,7 +171,7 @@ public class MovieProvider extends ContentProvider {
             throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         if (rowsUpdated != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+//            getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsUpdated;
     }

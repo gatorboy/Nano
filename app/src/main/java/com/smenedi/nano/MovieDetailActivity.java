@@ -5,7 +5,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -63,9 +62,9 @@ public class MovieDetailActivity extends AppCompatActivity {
 //        mFavorite.setBackgroundDrawable(isFavorite? getResources().getDrawable(android.R.drawable.star_big_on):getResources().getDrawable(android.R.drawable.star_big_off));
 //        mFavorite.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
         if(isFavorite) {
-            mFavorite.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+            mFavorite.setImageDrawable(getResources().getDrawable(R.drawable.favorite));
         } else {
-            mFavorite.setImageTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.white)));
+            mFavorite.setImageDrawable(getResources().getDrawable(R.drawable.nofavorite));
         }
     }
 
@@ -104,6 +103,9 @@ public class MovieDetailActivity extends AppCompatActivity {
     @OnClick(R.id.favorite)
     public void onFavorite() {
         MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getSupportFragmentManager().findFragmentById(R.id.movie_detail_container);
+        if(mFavorite!=null) {
+            mFavorite.setImageDrawable(getResources().getDrawable((!movieDetailFragment.isFavorite) ? R.drawable.favorite : R.drawable.nofavorite ));
+        }
         movieDetailFragment.onFavorite(!movieDetailFragment.isFavorite);
     }
 }

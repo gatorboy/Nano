@@ -7,8 +7,6 @@ import com.smenedi.nano.sync.MoviesSyncAdapter;
 import de.greenrobot.event.EventBus;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff.Mode;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -26,7 +24,6 @@ public class MoviesActivity extends AppCompatActivity {
     Toolbar mToolbar;
     private boolean mTwoPane;
     private String mSortOrder;
-
 
     MenuItem mFavoriteMenu;
 
@@ -99,6 +96,8 @@ public class MoviesActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.moviesactivity, menu);
         mFavoriteMenu = menu.findItem(R.id.show_favorites);
+        boolean isFavorites = Utility.isFavorites(this);
+        mFavoriteMenu.setIcon(getResources().getDrawable((isFavorites) ? R.drawable.favorite : R.drawable.nofavorite ));
         return true;
     }
 
@@ -118,7 +117,7 @@ public class MoviesActivity extends AppCompatActivity {
             MoviesFragment ff = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_movies);
             boolean isFavorites = Utility.isFavorites(this);
             if (null != ff) {
-                mFavoriteMenu.getIcon().setColorFilter(!isFavorites ? Color.RED : Color.WHITE, Mode.SRC_ATOP);
+                mFavoriteMenu.setIcon(getResources().getDrawable((!isFavorites) ? R.drawable.favorite : R.drawable.nofavorite));
                 ff.onFavorites(Utility.setFavorites(this, !isFavorites));
             }
         }
