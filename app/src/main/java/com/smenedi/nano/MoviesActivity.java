@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
@@ -138,11 +137,10 @@ public class MoviesActivity extends AppCompatActivity {
                                        .replace(R.id.movie_detail_container, movieDetailFragment, DETAILFRAGMENT_TAG)
                                        .commit();
         } else {
-            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, event.mView, getString(R.string.poster_transition));
             final Intent intent = new Intent(this, MovieDetailActivity.class);
             intent.setData(MovieEntry.buildMovieDetailUri(event.movieId));
             intent.putExtra(Movie.TITLE_FIELD_NAME, event.movieName);
-            startActivity(intent, optionsCompat.toBundle());
+            startActivity(intent);
         }
     }
 
