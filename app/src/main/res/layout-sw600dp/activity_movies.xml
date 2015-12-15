@@ -28,6 +28,8 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:orientation="horizontal"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
         tools:context="com.smenedi.nano.MoviesActivity">
 
         <fragment
@@ -36,7 +38,6 @@
             android:layout_weight="3"
             android:layout_width="0dp"
             android:name="com.smenedi.nano.MoviesFragment"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:layout="@layout/fragment_movies"/>
 
         <FrameLayout
@@ -52,9 +53,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:layout_width="wrap_content"
+        android:onClick="onFavorite"
         android:src="@drawable/favorite"
+        android:visibility="gone"
         app:backgroundTint="@color/primaryColor"
-        app:layout_anchor="@id/appbar"
+        app:layout_anchor="@id/movie_detail_container"
         app:layout_anchorGravity="bottom|right|end"/>
 
     <include layout="@layout/snackbar"/>

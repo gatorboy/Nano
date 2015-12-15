@@ -10,12 +10,14 @@ import android.content.Intent;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MoviesActivity extends AppCompatActivity {
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
@@ -26,12 +28,14 @@ public class MoviesActivity extends AppCompatActivity {
 
     MenuItem mFavoriteMenu;
 
+    FloatingActionButton mFavorite;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
-
+        mFavorite = (FloatingActionButton) findViewById(R.id.favorite);
         mToolbar = (Toolbar) findViewById(R.id.tool_bar);
         // We are using the tool bar as a replacement for action, setup it up as such
         if (mToolbar != null) {
@@ -81,6 +85,13 @@ public class MoviesActivity extends AppCompatActivity {
                 ff.onSortChanged();
             }
         }
+
+        MoviesFragment moviesFragment = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_movies);
+        if (moviesFragment != null) {
+            moviesFragment.queryProvider();
+        }
+
+
     }
 
     @Override
@@ -96,7 +107,7 @@ public class MoviesActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.moviesactivity, menu);
         mFavoriteMenu = menu.findItem(R.id.show_favorites);
         boolean isFavorites = Utility.isFavorites(this);
-        mFavoriteMenu.setIcon(getResources().getDrawable((isFavorites) ? R.drawable.favorite : R.drawable.nofavorite ));
+        mFavoriteMenu.setIcon(getResources().getDrawable((isFavorites) ? R.drawable.favorite : R.drawable.nofavorite));
         return true;
     }
 
@@ -113,12 +124,19 @@ public class MoviesActivity extends AppCompatActivity {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         } else if (id == R.id.show_favorites) {
-            MoviesFragment ff = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_movies);
-            boolean isFavorites = Utility.isFavorites(this);
-            if (null != ff) {
-                mFavoriteMenu.setIcon(getResources().getDrawable((!isFavorites) ? R.drawable.favorite : R.drawable.nofavorite));
-                ff.onFavorites(Utility.setFavorites(this, !isFavorites));
+
+            MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getSupportFragmentManager().findFragmentById(R.id.movie_detail_container);
+            if (movieDetailFragment != null) {
+                getSupportFragmentManager().beginTransaction().remove(movieDetailFragment).commit();
             }
+            MoviesFragment moviesFragment = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_movies);
+            boolean isFavorites = Utility.isFavorites(this);
+            if (null != moviesFragment) {
+                mFavoriteMenu.setIcon(getResources().getDrawable((!isFavorites) ? R.drawable.favorite : R.drawable.nofavorite));
+                moviesFragment.onFavorites(Utility.setFavorites(this, !isFavorites));
+            }
+
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -149,6 +167,25 @@ public class MoviesActivity extends AppCompatActivity {
             getWindow().setSharedElementExitTransition(TransitionInflater.from(this).inflateTransition(R.transition.transitions));
         }
     }
+
+    public void setFavoriteButton(boolean isFavorite) {
+        mFavorite.setVisibility(View.VISIBLE);
+        if(isFavorite) {
+            mFavorite.setImageDrawable(getResources().getDrawable(R.drawable.favorite));
+        } else {
+            mFavorite.setImageDrawable(getResources().getDrawable(R.drawable.nofavorite));
+        }
+    }
+
+
+    public void onFavorite(View view) {
+        MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getSupportFragmentManager().findFragmentById(R.id.movie_detail_container);
+        if(mFavorite!=null) {
+            mFavorite.setImageDrawable(getResources().getDrawable((!movieDetailFragment.isFavorite) ? R.drawable.favorite : R.drawable.nofavorite ));
+        }
+        movieDetailFragment.onFavorite(!movieDetailFragment.isFavorite);
+    }
+
 
 
 }

@@ -94,6 +94,8 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     CardView mReviewsCard;
     @Bind(R.id.trailers_card)
     CardView mTrailersCard;
+    @Bind(R.id.movie_detail)
+    LinearLayout mMovieDetail;
 
     private String mShareMovieDetails;
     private Uri mMovieDetailUri;
@@ -156,6 +158,7 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
     }
 
     private void setViews(Cursor cursor) {
+        mMovieDetail.setVisibility(View.VISIBLE);
         mPoster.setImageURI(ApiRequests.getPosterUri(cursor.getString(COLUMN_POSTER_PATH)));
         mYearOfRelease.setText(String.valueOf(getYearOfRelease(cursor.getString(COLUMN_RELEASE_DATE))));
         mRating.setText(getActivity().getString(R.string.format_rating, cursor.getDouble(COLUMN_RATING)));
@@ -170,6 +173,8 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
 
         if(getActivity() instanceof MovieDetailActivity) {
             ((MovieDetailActivity) getActivity()).setFavoriteButton(isFavorite);
+        } else {
+            ((MoviesActivity) getActivity()).setFavoriteButton(isFavorite);
         }
         //get trailers and reviews
         String trailers = cursor.getString(COLUMN_TRAILERS);
@@ -269,6 +274,8 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
         if (trailers.length() == 0) {
             mTrailersCard.setVisibility(View.GONE);
             return;
+        } else  {
+            mTrailersCard.setVisibility(View.VISIBLE);
         }
         mTrailersLayout.removeAllViews();
 
@@ -286,9 +293,12 @@ public class MovieDetailFragment extends Fragment implements LoaderCallbacks<Cur
 
     private void setReviewsView(JSONArray reviews) {
         Log.d(LOG_TAG, "No. of reviews=" + reviews.length());
+
         if (reviews.length() == 0) {
             mReviewsCard.setVisibility(View.GONE);
             return;
+        } else {
+            mReviewsCard.setVisibility(View.VISIBLE);
         }
         mReviewsLayout.removeAllViews();
         for (int i = 0; i < reviews.length(); i++) {

@@ -59,8 +59,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     public void setFavoriteButton(boolean isFavorite) {
-//        mFavorite.setBackgroundDrawable(isFavorite? getResources().getDrawable(android.R.drawable.star_big_on):getResources().getDrawable(android.R.drawable.star_big_off));
-//        mFavorite.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
         if(isFavorite) {
             mFavorite.setImageDrawable(getResources().getDrawable(R.drawable.favorite));
         } else {

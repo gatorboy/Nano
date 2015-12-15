@@ -5,6 +5,7 @@ import com.smenedi.nano.data.MovieContract.MovieEntry;
 import android.app.Activity;
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
@@ -47,5 +48,13 @@ public class Utility {
     public static void showSnackbar(Activity activity, String message) {
         final View coordinatorLayoutView = activity.findViewById(R.id.snackbar);
         Snackbar.make(coordinatorLayoutView, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    public void setFavoriteButton(FloatingActionButton favorite, boolean isFavorite) {
+        if(isFavorite) {
+            favorite.setImageDrawable(favorite.getResources().getDrawable(R.drawable.favorite));
+        } else {
+            favorite.setImageDrawable(favorite.getResources().getDrawable(R.drawable.nofavorite));
+        }
     }
 }
